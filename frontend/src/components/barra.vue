@@ -64,7 +64,7 @@
             <v-list-item-title>Iniciar Sesion</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{name: ''}">
+        <v-list-item :to="{name: 'Categoria'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-format-list-bulleted</v-icon>
           </v-list-item-action>

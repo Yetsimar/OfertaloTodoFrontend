@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Registro from '../views/Registro.vue'
 import Publicar from '../views/Publicar.vue'
+import Categoria from '../views/Categoria.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,11 @@ const routes = [
     path: '/Publicar',
     name: 'Publicar',
     component: Publicar
+  },
+  {
+    path: '/Categoria',
+    name: 'Categoria',
+    component: Categoria
   },
   {
     path: '/registro',

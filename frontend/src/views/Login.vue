@@ -31,24 +31,23 @@
                   id="password"
                   label="password"
                   name="password"
-                  type="password">
+                  type="password"
+                  icon='mdi-lock-question'>
                </v-text-field>
             </v-col>
           </v-row>
-          <v-flex xs12 sm6>
          <v-row align="center" justify="center">
             <v-col cols="6">
-                <v-btn color= "#11879a" flat @click.native="login" dark>Entrar</v-btn>
+                <v-btn small color= "#11879a" flat @click.native="login" dark><v-icon>close</v-icon>Entrar</v-btn>
             </v-col>
             <v-spacer></v-spacer>
             <v-col cols="6">
-            <v-btn color="#11879a" flat @click="close" dark>Cancelar</v-btn>
+            <v-btn small color="#11879a" flat @click="close" dark><v-icon>close</v-icon>Cancelar</v-btn>
             </v-col>
           </v-row>
           <v-row align="center" justify="center">
             <h3>¿Aun no tienes cuenta? <a href="./Registro" style="color:#12ceeb;">has click aquí</a></h3>
             </v-row>
-          </v-flex>
         </v-form>
       </v-flex>
     </v-layout>

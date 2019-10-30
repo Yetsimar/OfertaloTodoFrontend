@@ -6,14 +6,16 @@
         <router-view/>
       </div>
     </v-content>
+    <Footer></Footer>
   </v-app>
 </template>
 
 <script>
 import Barra from './components/barra.vue'
+import Footer from './components/footer.vue'
 export default {
   name: 'App',
-  components: { Barra },
+  components: { Barra, Footer },
   created () {
     this.initialize()
   },

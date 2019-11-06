@@ -47,15 +47,6 @@
           </v-img></v-avatar>
       </v-btn>
     </v-app-bar>
-    <v-navigation-mini v-model="mini" app temporary dark>
-    <v-list dense>
-      <v-list-item :to="{name: 'Login'}">
-       <v-list-item-content>
-            <v-list-item-title>Iniciar</v-list-item-title>
-          </v-list-item-content>
-      </v-list-item>
-    </v-list>
-    </v-navigation-mini>
     <v-navigation-drawer app v-model="drawer" temporary color="#111b1d" dark>
       <v-list dense>
       <v-list-item :to="{name: 'home'}">

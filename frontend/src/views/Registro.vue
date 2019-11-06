@@ -9,6 +9,7 @@
         <v-form enctype="multipart/form-data">
           <v-row align="center" justify="center">
                 <v-text-field
+                   v-model="form.nombre"
                    id="nombre"
                    color="#11879a"
                    label="Nombre"
@@ -18,6 +19,7 @@
                 </v-text-field>
                 <v-spacer></v-spacer>
                 <v-text-field
+                v-model="form.apellido"
                    id="apellido"
                    color="#11879a"
                    label="Apellido"
@@ -27,6 +29,7 @@
             </v-row>
           <v-row align="center" justify="center">
                 <v-text-field
+                  v-model="form.email"
                    id="correo"
                    color="#11879a"
                    label="Correo"
@@ -36,6 +39,7 @@
                 </v-text-field>
                 <v-spacer></v-spacer>
                 <v-text-field
+                  v-model="form.direccion"
                    id="direccion"
                    color="#11879a"
                    label="Direccion"
@@ -45,6 +49,7 @@
                 </v-row>
           <v-row align="center" justify="center">
                 <v-text-field
+                  v-model="form.telefono"
                    id="telefono"
                    color="#11879a"
                    label="Telefono"
@@ -53,6 +58,7 @@
                 </v-text-field>
                 <v-spacer></v-spacer>
                 <v-text-field
+                  v-model="form.password"
                   id="password"
                   color="#11879a"
                   label="Contraseña"
@@ -64,11 +70,11 @@
           <v-spacer></v-spacer>
           <v-row align="center" justify="center">
             <v-col cols="6">
-                <v-btn color= "#11879a" flat @click.native="login" dark><v-icon>save</v-icon>Registrar</v-btn>
+                <v-btn color= "#11879a" @click='save()' dark><v-icon>save</v-icon>Registrar</v-btn>
             </v-col>
             <v-spacer></v-spacer>
             <v-col cols="6">
-           <v-btn color="#11879a" flat @click="close" dark><v-icon>close</v-icon>Cancelar</v-btn>
+           <v-btn color="#11879a" @click='save()' dark><v-icon>close</v-icon>Cancelar</v-btn>
             </v-col>
              </v-row>
            <v-row align="center" justify="center">
@@ -81,6 +87,7 @@
 </template>
 
 <script>
+import Api from '@/services/methods'
 export default {
   props: {
     source: String
@@ -88,9 +95,12 @@ export default {
   data: () => ({
     drawer: null,
     form: {
-      id: 1,
-      email: null,
-      password: null
+      nombre: '',
+      apellido: '',
+      email: '',
+      direccion: '',
+      telefono: '',
+      password: ''
     },
     nameRules: [
       v => !!v || 'Nombre es requerido',
@@ -104,6 +114,33 @@ export default {
       v => !!v || 'Contraseña es requerida',
       v => (v && v.length <= 10) || 'máximo 8 caracteres'
     ]
-  })
+  }),
+  created () {
+    this.initialize()
+  },
+  methods: {
+    initialize () {
+    },
+    save () {
+      Api.post('/usuario', this.form)
+        .then(res => {
+          this.$swal(
+            'Felicidades.!',
+            'Te has registrado exitosamente',
+            'success'
+          )
+          this.initialize()
+          window.location.href = '/login'
+        })
+        .catch(err => {
+          console.log(err)
+          this.$swal(
+            'Oops...',
+            'Error encontrado, verifique su información',
+            'error'
+          )
+        })
+    }
+  }
 }
 </script>

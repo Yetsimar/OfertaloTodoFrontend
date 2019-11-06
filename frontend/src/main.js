@@ -5,10 +5,15 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueSweetalert2 from 'vue-sweetalert2'
+import cookies from 'vue-cookies'
+import 'sweetalert2/dist/sweetalert2.min.css'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
-axios.defaults.baseURL = 'http://localhost:3000/'
+Vue.use(VueSweetalert2)
+Vue.use(cookies)
+axios.defaults.baseURL = 'http://192.168.0.100:9004/'
 new Vue({
   router,
   store,

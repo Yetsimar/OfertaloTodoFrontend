@@ -6,6 +6,9 @@ import vuetify from './plugins/vuetify'
 import VueSweetalert2 from 'vue-sweetalert2'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueSweetalert2 from 'vue-sweetalert2'
+import cookies from 'vue-cookies'
+import 'sweetalert2/dist/sweetalert2.min.css'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)

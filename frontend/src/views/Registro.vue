@@ -9,15 +9,17 @@
         <v-form enctype="multipart/form-data">
           <v-row align="center" justify="center">
                 <v-text-field
+                   v-model="form.nombre"
                    id="nombre"
                    color="#11879a"
                    label="Nombre"
                    name="Nombre"
-                   type="text">
+                   type="text"
+                   :rules="nameRules">
                 </v-text-field>
-          </v-row>
-          <v-row align="center" justify="center">
+                <v-spacer></v-spacer>
                 <v-text-field
+                v-model="form.apellido"
                    id="apellido"
                    color="#11879a"
                    label="Apellido"
@@ -27,15 +29,17 @@
             </v-row>
           <v-row align="center" justify="center">
                 <v-text-field
+                  v-model="form.email"
                    id="correo"
                    color="#11879a"
                    label="Correo"
                    name="Correo"
-                   type="text">
+                   type="text"
+                   :rules="emailRules">
                 </v-text-field>
-                </v-row>
-          <v-row align="center" justify="center">
+                <v-spacer></v-spacer>
                 <v-text-field
+                  v-model="form.direccion"
                    id="direccion"
                    color="#11879a"
                    label="Direccion"
@@ -45,36 +49,37 @@
                 </v-row>
           <v-row align="center" justify="center">
                 <v-text-field
+                  v-model="form.telefono"
                    id="telefono"
                    color="#11879a"
                    label="Telefono"
                    name="Telefono"
                    type="text">
                 </v-text-field>
-                </v-row>
-          <v-row align="center" justify="center">
+                <v-spacer></v-spacer>
                 <v-text-field
+                  v-model="form.password"
                   id="password"
-                  label="password"
-                  name="password"
-                  type="password">
+                  color="#11879a"
+                  label="Contraseña"
+                  name="contraseña"
+                  type="password"
+                  :rules="passwordRules">
                </v-text-field>
                </v-row>
           <v-spacer></v-spacer>
-          <v-flex xs12 sm6>
           <v-row align="center" justify="center">
             <v-col cols="6">
-                <v-btn color= "#11879a" flat @click.native="login" dark>Registrar</v-btn>
+                <v-btn color= "#11879a" @click='save()' dark><v-icon>save</v-icon>Registrar</v-btn>
             </v-col>
             <v-spacer></v-spacer>
             <v-col cols="6">
-           <v-btn color="#11879a" flat @click="close" dark>Cancelar</v-btn>
+           <v-btn color="#11879a" @click='save()' dark><v-icon>close</v-icon>Cancelar</v-btn>
             </v-col>
              </v-row>
            <v-row align="center" justify="center">
             <h3>¿Ya tienes cuenta? <a href="./Login" style="color:#12ceeb;">has click aquí</a></h3>
             </v-row>
-          </v-flex>
         </v-form>
       </v-flex>
     </v-layout>
@@ -82,6 +87,7 @@
 </template>
 
 <script>
+import Api from '@/services/methods'
 export default {
   props: {
     source: String
@@ -89,10 +95,52 @@ export default {
   data: () => ({
     drawer: null,
     form: {
-      id: 1,
-      email: null,
-      password: null
+      nombre: '',
+      apellido: '',
+      email: '',
+      direccion: '',
+      telefono: '',
+      password: ''
+    },
+    nameRules: [
+      v => !!v || 'Nombre es requerido',
+      v => (v && v.length <= 10) || 'máximo 10 caracteres'
+    ],
+    emailRules: [
+      v => !!v || 'E-mail es requerido',
+      v => /.+@.+\..+/.test(v) || 'E-mail es inválido'
+    ],
+    passwordRules: [
+      v => !!v || 'Contraseña es requerida',
+      v => (v && v.length <= 10) || 'máximo 8 caracteres'
+    ]
+  }),
+  created () {
+    this.initialize()
+  },
+  methods: {
+    initialize () {
+    },
+    save () {
+      Api.post('/usuario', this.form)
+        .then(res => {
+          this.$swal(
+            'Felicidades.!',
+            'Te has registrado exitosamente',
+            'success'
+          )
+          this.initialize()
+          window.location.href = '/login'
+        })
+        .catch(err => {
+          console.log(err)
+          this.$swal(
+            'Oops...',
+            'Error encontrado, verifique su información',
+            'error'
+          )
+        })
     }
-  })
+  }
 }
 </script>

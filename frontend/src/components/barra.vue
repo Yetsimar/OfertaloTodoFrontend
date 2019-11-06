@@ -20,9 +20,9 @@
         hide-details
         label="Buscar"
         class="hidden-sm-and-down"
-      ><v-btn icon>
-        <v-icon>mdi-search</v-icon>
-      </v-btn>
+        v-model='search'
+        append-icon='search'
+      >
       </v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon>
@@ -34,6 +34,7 @@
       <v-btn
         icon
         large
+        @click="mini = !mini"
       >
         <v-avatar
           size="32px"
@@ -95,16 +96,14 @@
 </v-layout>
 </template>
 <script>
-import { mdiAccount } from '@mdi/js'
 export default {
   props: {
     source: String
   },
   data: () => ({
-    icons: {
-      mdiAccount
-    },
-    drawer: true
+    search: '',
+    drawer: null,
+    mini: null
   })
 }
 </script>

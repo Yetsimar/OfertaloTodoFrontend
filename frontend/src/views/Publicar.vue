@@ -10,7 +10,7 @@
      <v-card-text>
   <v-form  ref="form" v-model="valid" lazy-validation>
     <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
-    <img :src='"http://localhost:3000/" + img' v-if='img && !form.imagen.imageUrl' style='width:310px;height:auto'/>
+    <img :src='ruta + img' v-if='img && !form.imagen.imageUrl' style='width:310px;height:auto'/>
     <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto'/>
                           <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='img' ></v-text-field>
                           <input
@@ -63,7 +63,7 @@
         <v-list-item-subtitle>Publicado por:Usuario  </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
-    <img :src='ruta +img+ `${publicacion.imagen}`' style='width: 300px; height: 250px;'>
+    <img :src='ruta + `${publicacion.imagen}`' style='width: 300px; height: 250px;'>
     <v-card-text>
       {{publicacion.descripcion}}
       {{publicacion.categoria}}
@@ -108,7 +108,7 @@
 <script>
 export default {
   data: () => ({
-    ruta: 'http://localhost:3000/',
+    ruta: 'http://localhost:9004/',
     publicaciones: [],
     img: '',
     editedIndex: -1,
@@ -161,7 +161,7 @@ export default {
   },
   methods: {
     listarCategorias () {
-      this.axios.get('/categorias')
+      this.axios.get('/api/categorias')
         .then((response) => {
           this.categorias = response.data
           console.log(this.categorias)
@@ -231,7 +231,7 @@ export default {
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
       this.axios
-        .get('/publicaciones')
+        .get('/api/publicaciones')
         .then(response => {
           this.publicaciones = response.data
           console.log(this.publicaciones)
@@ -266,14 +266,14 @@ export default {
         data.append('imagen', this.editedItem.imagen.imageFile)
       }
       if (this.editedIndex > -1) {
-        this.axios.put('/publicacion', data)
+        this.axios.put('/api/publicaciones', data)
           .then(response => {
             this.editedItem = Object.assign({}, this.defaultItem)
             console.log(response)
           })
         Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
       } else {
-        this.axios.post('image', data)
+        this.axios.post('/api/publicaciones', data)
           .then(response => {
             console.log(response.data)
             this.publicaciones.push(response.data)

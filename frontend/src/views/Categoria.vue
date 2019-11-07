@@ -140,7 +140,7 @@ export default {
     /* muestra en la tabla los categorias */
     listarCategoria () {
       this.axios
-        .get('/categorias')
+        .get('/api/categorias')
         .then(response => {
           this.categorias = response.data
         })
@@ -165,7 +165,7 @@ export default {
       const index = this.categorias.indexOf(item)
       confirm('¿Esta seguro que desea Eliminar?') &&
         this.categorias.splice(index, 1)
-      this.axios.delete('/categorias/' + item._id).then(response => {
+      this.axios.delete('/api/categorias/' + item._id).then(response => {
         console.log(response)
       })
     },
@@ -185,7 +185,7 @@ export default {
         console.log(this.editedItem)
         console.log(this.editedItem._id)
         this.axios
-          .put('/categorias/' + this.editedItem._id, {
+          .put('/api/categorias/' + this.editedItem._id, {
             nombre: this.editedItem.nombre
           })
           .then(response => {
@@ -195,7 +195,7 @@ export default {
         Object.assign(this.categorias[this.editedIndex], this.editedItem)
       } else {
         this.axios
-          .post('/categorias', {
+          .post('/api/categorias', {
             nombre: this.editedItem.nombre
           })
           .then(response => {

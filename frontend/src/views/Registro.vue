@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-container grid-list-xl text-xs-center>
     <v-layout row wrap>
       <v-flex xs12 sm6 offset-xs3 style="height:120px">
@@ -124,13 +124,21 @@ export default {
     save () {
       Api.post('/usuario', this.form)
         .then(res => {
-          this.$swal(
-            'Felicidades.!',
-            'Te has registrado exitosamente',
-            'success'
-          )
-          this.initialize()
-          window.location.href = '/login'
+          if (res.data.status === 'denied') {
+            this.$swal(
+              'Oops...',
+              'El usuario ya existe, por favor verifique su información',
+              'error'
+            )
+          } else {
+            this.$swal(
+              'Felicidades.!',
+              'Te has registrado exitosamente',
+              'success'
+            )
+            this.initialize()
+            window.location.href = '/login'
+          }
         })
         .catch(err => {
           console.log(err)

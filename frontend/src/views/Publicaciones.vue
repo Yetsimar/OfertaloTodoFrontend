@@ -1,41 +1,90 @@
 <template>
-<v-container :items="publicaciones" >
 <v-row  justify="center" >
-<v-col cols="12" sm="8" md="4">
-   <v-card >
-     <v-toolbar flat color="indigo" dark>
-    <v-toolbar-title >Publica un articulo</v-toolbar-title>
-    <v-spacer></v-spacer>
-     </v-toolbar>
-     <v-card-text>
-  <v-form  ref="form" v-model="valid" lazy-validation>
-    <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
-    <img :src='ruta + img' v-if='img && !form.imagen.imageUrl' style='width:310px;height:auto'/>
-    <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto' />
-    <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='img' ></v-text-field>
-    <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
-    <v-textarea  solo  v-model="editedItem.descripcion" name="input-7-4"   label="Descripcion" ></v-textarea>
-    <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="[v => !!v || 'Seleccione una categoria']"  label="Categoria"  required ></v-select>
-    <v-text-field   v-model="editedItem.precio"   label="Pon un precio"  required></v-text-field>
-    <v-checkbox  v-model="checkbox" :rules="[v => !!v || 'selecciona la casilla para  continuar!']" label="seguro desea publicar?"  required ></v-checkbox>
+<v-col cols="12" sm="8" md="3">
+    <v-card >
+        <v-toolbar flat color="indigo" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+            <v-toolbar-title class="white--text" >Panel</v-toolbar-title>
+            <v-spacer></v-spacer>
+        </v-toolbar>
+        <v-card-text>
+             <v-list>
+      <v-list-group
+        v-for="item in items"
+        :key="item.title"
+        v-model="item.active"
+        :prepend-icon="item.action"
+        no-action
+      >
+        <template v-slot:activator>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title"></v-list-item-title>
+          </v-list-item-content>
+        </template>
 
-    <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
-    <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
-  </v-form>
- <!--  ....................mis publicaciones .......................... -->
-  </v-card-text>
-   </v-card>
-   </v-col>
-   <v-col cols="12" sm="8" md="8">
+        <v-list-item
+          v-for="categoria in categorias" :key="categoria._id" @click="funcionvaqui">
+          <v-list-item-content>
+            <v-list-item-title v-text="categoria.nombre"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list>
+    <!-- ..................lista 2........................ -->
+       <v-h3 class="black--text">
+           <v-icon  color="warning">mdi-star</v-icon>
+           Vendedores destacados</v-h3>
+       <v-list>
+      <v-list-item
+        v-for="item in items2"
+        :key="item.title"
+        @click="ss"
+      >
+        <v-list-item-icon>
+          <v-icon v-if="item.icon" color="pink">mdi-star</v-icon>
+        </v-list-item-icon>
+
+        <v-list-item-content>
+          <v-list-item-title v-text="item.title"></v-list-item-title>
+        </v-list-item-content>
+
+        <v-list-item-avatar>
+          <v-img :src="item.avatar"></v-img>
+        </v-list-item-avatar>
+      </v-list-item>
+    </v-list>
+   <!-- .............rango de..................   -->
+    <!-- ..................lista 2........................ -->
+       <v-h3 class="black--text">
+           <v-icon  color="warning"></v-icon>
+           Rango de precios</v-h3>
+       <v-list>
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title >hasta $50</v-list-item-title>
+          <br> <br>
+          <v-list-item-title>de $50 a $100</v-list-item-title>
+          <br> <br>
+          <v-list-item-title>de $100 a $500</v-list-item-title>
+           <br> <br>
+          <v-list-item-title>de $500 a $2000</v-list-item-title>
+           <br> <br>
+          <v-list-item-title>Mas de $2000</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+        </v-card-text>
+    </v-card >
+</v-col>
+   <v-col cols="12" sm="8" md="9">
    <v-card >
-   <v-toolbar flat color="indigo" dark>
-    <v-toolbar-title >Mis ultimas publicaciones</v-toolbar-title>
+   <v-toolbar flat color="indigo" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    <v-toolbar-title class="white--text">Publicaciones</v-toolbar-title>
     <v-spacer></v-spacer>
      </v-toolbar>
      <v-card-text>
   <v-row align="center" justify="center">
     <!-- publicacion 1 -->
-    <v-col cols="12" sm="8" md="6"  v-for="publicacion in publicaciones" :key="publicacion._id">
+    <v-col cols="12" sm="8" md="4"  v-for="publicacion in publicaciones" :key="publicacion._id">
       <v-card>
       <v-form enctype="">
     <v-list-item  :items="publicaciones">
@@ -59,20 +108,21 @@
       ${{publicacion.precio}}
     </v-card-text>
     <v-card-actions>
-       <v-icon color="warning" title="Editar"  class="mr-2"  @click="editItem(publicacion)" >
-         mdi-pencil
+       <v-icon color="indigo" title="Ver detalles"  class="mr-2" >
+         mdi-eye
         </v-icon>
-        <v-icon color="error" title="Eliminar"  class="mr-2"  v-on:click="deleteItem(publicacion)" >
-         mdi-delete
+        <v-icon color="blue lighten-2" title="Me gusta"  class="mr-2" >
+        {{publicacion.likes}}
+         mdi-thumb-up
         </v-icon>
       <v-spacer></v-spacer>
       <v-btn icon>
         {{publicacion.likes}}
-        <v-icon>mdi-heart</v-icon>
+        <v-icon color="error" title="+ Favoritos">mdi-heart</v-icon>
       </v-btn>
       <v-btn icon>
         {{publicacion.vistas}}
-        <v-icon>mdi-share-variant</v-icon>
+        <v-icon color="purple" title="Compartir">mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
     </v-form>
@@ -82,35 +132,9 @@
    </v-card-text>
   </v-card>
    </v-col>
-  </v-row>
-  <v-dialog v-model="dialogEdit" max-width="500px">
-              <v-card>
-                <v-card-title>
-                  <span class="headline">Actualizacion de la Publicacion</span>
-                </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.titulo"  label="Titulo"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-textarea v-model="editedItem.descripcion"  label="Descripcion"></v-textarea>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.precio"  label="Precio"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                          <v-select  v-model="editedItem.categoria" :items="idCategoriasArray" label="categoria"></v-select>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-  </v-container>
+    </v-row>
 </template>
+
 <script>
 import Api from '@/services/methods'
 import { server, port } from '@/services/environment'
@@ -123,6 +147,21 @@ export default {
     editedIndex: -1,
     categorias: [],
     idCategoriasArray: [],
+    items: [
+      {
+        action: 'restaurant',
+        title: 'Categorias',
+        active: true,
+        items: [
+        ]
+      }
+    ],
+    items2: [
+      { icon: true, title: 'Jason Oner', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
+      { title: 'Travis Howard', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
+      { title: 'Ali Connors', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
+      { title: 'Cindy Baker', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' }
+    ],
     editedItem: {
       _id: '',
       titulo: '',
@@ -292,52 +331,6 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       }, 300)
-    },
-    save () {
-      this.loading = true
-      const data = new FormData()
-      Object.keys(this.editedItem).map(key => {
-        if (Array.isArray(this.editedItem[key])) {
-          this.editedItem[key].forEach(val => {
-            if (typeof val === 'object' && val !== null) {
-              return data.append(`${key}[]`, JSON.stringify(val))
-            }
-            return data.append(`${key}[]`, val)
-          })
-        } else if (
-          typeof this.editedItem[key] === 'object' &&
-          this.editedItem[key] !== null
-        ) {
-          return data.append(key, JSON.stringify(this.editedItem[key]))
-        } else {
-          return data.append(key, this.editedItem[key])
-        }
-      })
-      if (this.editedItem.imagen.imageFile) {
-        data.append('imagen', this.editedItem.imagen.imageFile)
-      }
-      if (this.editedIndex > -1) {
-        Api.put('publicaciones', data)
-          .then(response => {
-            this.editedItem = Object.assign({}, this.defaultItem)
-            console.log(response)
-          })
-        Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
-      } else {
-        Api.post('publicaciones', data)
-          .then(response => {
-            console.log(response.data)
-            this.$swal({
-              type: 'success',
-              title: 'Registro exitoso',
-              text: 'Todos los cambios han guardados'
-            })
-            this.publicaciones.push(response.data)
-          })
-      }
-      console.log('Datos guardados')
-      this.reset()
-      this.close()
     }
   }
 }

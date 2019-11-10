@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Registro from '../views/Registro.vue'
 import Publicar from '../views/Publicar.vue'
 import Categoria from '../views/Categoria.vue'
+import Publicaciones from '../views/Publicaciones.vue'
 
 Vue.use(Router)
 export default new Router({
@@ -35,6 +36,11 @@ export default new Router({
       path: '/registro',
       name: 'Registro',
       component: Registro
+    },
+    {
+      path: '/publicaciones',
+      name: 'Publicaciones',
+      component: Publicaciones
     }
   ]
 })

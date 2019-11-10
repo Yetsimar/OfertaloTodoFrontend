@@ -27,6 +27,9 @@
                   <v-icon title="Agregar">mdi-plus</v-icon>
                 </v-btn>
               </template>
+              <v-form ref="form"
+                    v-model="valid"
+                    lazy-validation>
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
@@ -36,7 +39,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.nombre" label="Nombre"></v-text-field>
+                        <v-text-field v-model="editedItem.nombre" :rules="nombreRules" label="Nombre" required></v-text-field>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -51,6 +54,7 @@
                 </v-card-actions>
                  </v-card-text>
               </v-card>
+              </v-form>
             </v-dialog>
             <!-- View show -->
             <v-dialog v-model="dialogShow" max-width="500px">
@@ -63,7 +67,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.nombre" disabled="true" label="Nombre"></v-text-field>
+                        <v-text-field v-model="editedItem.nombre" disabled="true" :rules="nombreRules" label="Nombre"></v-text-field>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -88,8 +92,14 @@
 </template>
 
 <script>
+import Api from '@/services/methods'
 export default {
   data: () => ({
+    valid: true,
+    nombreRules: [
+      v => !!v || 'El nombre es requerido',
+      v => (v && v.length <= 25) || 'El nombre no debe pasar los 25 caracteres'
+    ],
     dialog: false,
     dialogShow: false,
     headers: [
@@ -108,7 +118,6 @@ export default {
       nombre: ''
     }
   }),
-
   computed: {
     formTitle () {
       return this.editedIndex === -1
@@ -137,10 +146,16 @@ export default {
     initialize () {
       this.listarCategoria()/* inicia el metodo de listar */
     },
+    validate () {
+      if (this.$refs.form.validate()) {
+        return true
+      } else {
+        return false
+      }
+    },
     /* muestra en la tabla los categorias */
     listarCategoria () {
-      this.axios
-        .get('/api/categorias')
+      Api.get('categorias')
         .then(response => {
           this.categorias = response.data
         })
@@ -149,7 +164,6 @@ export default {
           console.log('error' + e)
         })
     },
-
     editItem (item) {
       this.editedIndex = this.categorias.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -163,13 +177,29 @@ export default {
 
     deleteItem (item) {
       const index = this.categorias.indexOf(item)
-      confirm('¿Esta seguro que desea Eliminar?') &&
-        this.categorias.splice(index, 1)
-      this.axios.delete('/api/categorias/' + item._id).then(response => {
-        console.log(response)
+      this.$swal({
+        type: 'warning',
+        title: '¿Seguro que quiere borrar?',
+        text: 'No podrá revertir',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, borrar',
+        cancelButtonText: 'cancelar'
+      }).then(result => {
+        if (result.value) {
+          this.$swal('Borrado!', 'Su registro fue borrado.', 'success')
+          this.categorias.splice(index, 1)
+          Api.delete('categorias/' + item._id)
+            .then(response => {
+              console.log(response)
+            })
+        }
       })
     },
-
+    reset () {
+      this.$refs.form.reset()
+    },
     close () {
       this.dialog = false
       this.dialogShow = false
@@ -180,30 +210,48 @@ export default {
     },
 
     save () {
-      if (this.editedIndex > -1) {
-        console.log('Datos guardados')
-        console.log(this.editedItem)
-        console.log(this.editedItem._id)
-        this.axios
-          .put('/api/categorias/' + this.editedItem._id, {
+      if (this.validate()) {
+        if (this.editedIndex > -1) {
+          console.log('Datos guardados')
+          console.log(this.editedItem)
+          console.log(this.editedItem._id)
+          Api.put('categorias/' + this.editedItem._id, {
             nombre: this.editedItem.nombre
           })
-          .then(response => {
-            console.log(response)
-          })
+            .then(response => {
+              console.log(response)
+              this.$swal({
+                type: 'success',
+                title: 'Actualizacion exitosa',
+                text: 'Todos los cambios han guardados'
+              })
+            })
 
-        Object.assign(this.categorias[this.editedIndex], this.editedItem)
-      } else {
-        this.axios
-          .post('/api/categorias', {
+          Object.assign(this.categorias[this.editedIndex], this.editedItem)
+        } else {
+          Api.post('categorias', {
             nombre: this.editedItem.nombre
           })
-          .then(response => {
-            console.log(response)
-          })
-        this.categorias.push(this.editedItem)
+            .then(response => {
+              console.log(response)
+              this.$swal({
+                type: 'success',
+                title: 'Registro exitoso',
+                text: 'Todos los cambios han guardados'
+              })
+            })
+            .catch(e => {
+              this.$swal({
+                type: 'error',
+                title: 'Error al guardar',
+                text: 'Por verifique los datos e intente de nuevo'
+              })
+              console.log('error guardar....' + e)
+            })
+          this.categorias.push(this.editedItem)
+        }
+        this.close()
       }
-      this.close()
     }
   }
 }

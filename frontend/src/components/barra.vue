@@ -78,6 +78,14 @@
             <v-icon color="#11879a">mdi-newspaper-variant-multiple</v-icon>
           </v-list-item-action>
           <v-list-item-content>
+            <v-list-item-title>Publicar</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :to="{name: 'Publicaciones'}">
+          <v-list-item-action>
+            <v-icon color="#11879a">mdi-newspaper-variant-multiple</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
             <v-list-item-title>Publicaciones</v-list-item-title>
           </v-list-item-content>
         </v-list-item>

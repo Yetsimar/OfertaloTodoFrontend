@@ -8,19 +8,19 @@
     <v-spacer></v-spacer>
      </v-toolbar>
      <v-card-text>
+  <!-- .......................Formulario Registrar............................. -->
   <v-form  ref="form" v-model="valid" lazy-validation>
-    <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
-    <img :src='ruta + img' v-if='img && !form.imagen.imageUrl' style='width:310px;height:auto'/>
-    <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto' />
-    <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='img' ></v-text-field>
-    <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
-    <v-textarea  solo  v-model="editedItem.descripcion" name="input-7-4"   label="Descripcion" ></v-textarea>
-    <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="[v => !!v || 'Seleccione una categoria']"  label="Categoria"  required ></v-select>
-    <v-text-field   v-model="editedItem.precio"   label="Pon un precio"  required></v-text-field>
-    <v-checkbox  v-model="checkbox" :rules="[v => !!v || 'selecciona la casilla para  continuar!']" label="seguro desea publicar?"  required ></v-checkbox>
+        <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
+        <img :src='editedItem.imagen.imageUrl'  style='width:310px;height:auto' />
+        <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
+        <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
+        <v-textarea  solo  v-model="editedItem.descripcion" name="input-7-4"   label="Descripcion" ></v-textarea>
+        <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="[v => !!v || 'Seleccione una categoria']"  label="Categoria"  required ></v-select>
+        <v-text-field   v-model="editedItem.precio"   label="Pon un precio"  required></v-text-field>
+        <v-checkbox  v-model="checkbox" :rules="[v => !!v || 'selecciona la casilla para  continuar!']" label="seguro desea publicar?"  required ></v-checkbox>
 
-    <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
-    <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
+        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
+        <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
   </v-form>
  <!--  ....................mis publicaciones .......................... -->
   </v-card-text>
@@ -104,6 +104,14 @@
                       <v-col cols="12" sm="12" md="12">
                           <v-select  v-model="editedItem.categoria" :items="idCategoriasArray" label="categoria"></v-select>
                       </v-col>
+                       <v-col cols="12" sm="12" md="12">
+                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
+                      <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto' />
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName' prepend-inner-icon='attach_file' ></v-text-field>
+                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
+                       </v-col>
+                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
+                        <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -317,10 +325,29 @@ export default {
         data.append('imagen', this.editedItem.imagen.imageFile)
       }
       if (this.editedIndex > -1) {
-        Api.put('publicaciones', data)
+        console.log('id public. ' + this.editedItem._id)
+        Api.put('publicaciones/' + this.editedItem._id, {
+          titulo: this.editedItem.titulo,
+          descripcion: this.editedItem.descripcion,
+          categoria: this.editedItem.categoria,
+          precio: this.editedItem.precio,
+          imagen: this.editedItem.imagen })
           .then(response => {
             this.editedItem = Object.assign({}, this.defaultItem)
             console.log(response)
+            this.$swal({
+              type: 'success',
+              title: 'Actualizacion exitosa',
+              text: 'Todos los cambios han guardados'
+            })
+          })
+          .catch(e => {
+            this.$swal({
+              type: 'error',
+              title: 'Error al Actualizar',
+              text: 'Por verifique los datos e intente de nuevo'
+            })
+            console.log('error guardar....' + e)
           })
         Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
       } else {

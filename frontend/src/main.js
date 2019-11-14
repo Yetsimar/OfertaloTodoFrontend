@@ -13,7 +13,6 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(VueSweetalert2)
 Vue.use(cookies)
-axios.defaults.baseURL = 'http://localhost:3000'
 new Vue({
   router,
   store,

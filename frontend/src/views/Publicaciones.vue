@@ -108,9 +108,7 @@
       ${{publicacion.precio}}
     </v-card-text>
     <v-card-actions>
-       <v-icon color="indigo" title="Ver detalles"  class="mr-2" >
-         mdi-eye
-        </v-icon>
+      <v-icon color="indigo" title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
         <v-icon color="blue lighten-2" title="Me gusta"  class="mr-2" >
         {{publicacion.likes}}
          mdi-thumb-up
@@ -132,6 +130,27 @@
    </v-card-text>
   </v-card>
    </v-col>
+     <!-- View show -->
+            <v-dialog v-model="dialogShow" max-width="800px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Detalles de Publicacion</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.titulo" disabled="true" label="Titulo"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.descripcion" disabled="true" label="Descripcion" ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+            <!-- View show -->
     </v-row>
 </template>
 
@@ -141,6 +160,7 @@ import { server, port } from '@/services/environment'
 export default {
   data: () => ({
     dialogEdit: false,
+    dialogShow: false,
     ruta: server + ':' + port,
     publicaciones: [],
     img: '',
@@ -193,6 +213,9 @@ export default {
         val || this.close()
       },
       dialogEdit (val) {
+        val || this.close()
+      },
+      dialogShow (val) {
         val || this.close()
       }
     },
@@ -300,6 +323,11 @@ export default {
       this.editedIndex = this.publicaciones.indexOf(publicacion)
       this.editedItem = Object.assign({}, publicacion)
       this.dialogEdit = true
+    },
+    ShowItem (publicacion) {
+      this.editedIndex = this.publicaciones.indexOf(publicacion)
+      this.editedItem = Object.assign({}, publicacion)
+      this.dialogShow = true
     },
     deleteItem (publicacion) {
       const index = this.publicaciones.indexOf(publicacion)

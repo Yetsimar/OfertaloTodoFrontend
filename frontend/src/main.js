@@ -13,7 +13,6 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(VueSweetalert2)
 Vue.use(cookies)
-// axios.defaults.baseURL = 'http://192.168.0.101:9004'
 new Vue({
   router,
   store,

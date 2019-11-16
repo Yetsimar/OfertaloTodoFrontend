@@ -87,7 +87,7 @@
     <v-col cols="12" sm="8" md="4"  v-for="publicacion in publicaciones" :key="publicacion._id">
       <v-card>
       <v-form enctype="">
-    <v-list-item  :items="publicaciones">
+    <v-list-item  >
       <v-list-item-avatar color="grey">
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
       </v-list-item-avatar>
@@ -108,14 +108,16 @@
       ${{publicacion.precio}}
     </v-card-text>
     <v-card-actions>
-      <v-icon color="indigo" title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
-        <v-icon color="blue lighten-2" title="Me gusta"  class="mr-2" >
+      <v-btn icon>
+      <v-icon color="indigo"  title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
+        </v-btn>
+        <v-btn icon >
+      <v-icon color="blue lighten-2"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-thumb-up </v-icon>
         {{publicacion.likes}}
-         mdi-thumb-up
-        </v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon>
-        {{publicacion.likes}}
+        {{publicacion.vistas}}
         <v-icon color="error" title="+ Favoritos">mdi-heart</v-icon>
       </v-btn>
       <v-btn icon>
@@ -131,7 +133,7 @@
   </v-card>
    </v-col>
      <!-- View show -->
-            <v-dialog v-model="dialogShow" max-width="800px">
+            <v-dialog v-model="dialogShow" max-width="500px">
               <v-card>
                 <v-card-title>
                   <span class="headline">Detalles de Publicacion</span>
@@ -142,13 +144,95 @@
                       <v-col cols="12" sm="12" md="6">
                         <v-text-field v-model="editedItem.titulo" disabled="true" label="Titulo"></v-text-field>
                       </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
+                      </v-col>
                       <v-col cols="12" sm="12" md="6">
                         <v-text-field v-model="editedItem.descripcion" disabled="true" label="Descripcion" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.precio" disabled="true" label="Precio" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-select v-model="editedItem.categoria" :items="idCategoriasArray" disabled="true" label="Categoria" ></v-select>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
-              </v-card>
+                <v-container>
+                <!-- .....................Comentar........................ -->
+                <div class="text-center">
+                      <v-dialog v-model="menu2" persistent max-width="500px">
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        color="indigo"
+                        dark
+                        v-on="on"
+                        @click="listarComentarios()"
+                      >
+                        Comentar
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </template>
+                        <v-card>
+                          <div class="text-right">
+                          <v-btn text @click="menu2 = false">Salir</v-btn>
+                          </div>
+                          <v-list>
+                            <v-list-item>
+                              <v-list-item-avatar>
+                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                              </v-list-item-avatar>
+                              <v-list-item-content>
+                                <v-list-item-title>John Leider</v-list-item-title>
+                                <v-list-item-subtitle>Founder of Vuetify.js</v-list-item-subtitle>
+                              </v-list-item-content>
+                              <v-list-item-action>
+                                <v-btn
+                                  :class="fav ? 'red--text' : ''"
+                                  icon
+                                  @click="fav = !fav"
+                                >
+                                  <v-icon>mdi-heart</v-icon>
+                                </v-btn>
+                              </v-list-item-action>
+                            </v-list-item>
+                          </v-list>
+                          <v-divider></v-divider>
+                          <v-list>
+                            <v-list-item>
+                              <v-list-item-action>
+                              </v-list-item-action>
+                        <v-text-field v-model="itemComentario.texto"  label="Cometa aqui....." ></v-text-field>
+                            </v-list-item>
+                          </v-list>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn text @click="menu2 = false">Cancelar</v-btn>
+                            <v-btn color="primary" text @click="comentar()">Comentar</v-btn>
+                          </v-card-actions>
+                         <p class="text-center">Comentarios</p>
+                           <v-list v-for="comentar in comentarios" :key="comentar._id">
+                             <!-- ...............comentarios.................... -->
+                            <v-list-item >
+                                <v-list-item-avatar>
+                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                              </v-list-item-avatar>
+                              <v-list-item-content >
+                                <div v-for="usuario in comentar " :key="usuario._id">
+                                <v-list-item-title class="blue--text">{{usuario.nombre}} {{usuario.apellido}}</v-list-item-title>
+                                 </div>
+                                 <v-list-item-title>{{comentar.texto}}</v-list-item-title>
+                                 <p class="text-right">{{comentar.Create_at | moment("DD-MM-YYYY")}}</p>
+                              </v-list-item-content>
+                            </v-list-item>
+                          </v-list>
+                        </v-card>
+                       </v-dialog>
+                    </div>
+                    </v-container>
+                 <!--  .................fin comentar................. -->
+                          </v-card>
             </v-dialog>
             <!-- View show -->
     </v-row>
@@ -159,10 +243,15 @@ import Api from '@/services/methods'
 import { server, port } from '@/services/environment'
 export default {
   data: () => ({
+    fav: true,
+    menu: false,
+    menu2: false,
+    estado: false,
     dialogEdit: false,
     dialogShow: false,
     ruta: server + ':' + port,
     publicaciones: [],
+    comentarios: [],
     img: '',
     editedIndex: -1,
     categorias: [],
@@ -188,6 +277,7 @@ export default {
       descripcion: '',
       categoria: '',
       precio: '',
+      likes: '',
       imagen: {
         imageName: '',
         imageUrl: '',
@@ -199,12 +289,30 @@ export default {
       titulo: '',
       descripcion: '',
       precio: '',
+      likes: '',
       categoria: '',
       imagen: {
         imageName: '',
         imageUrl: '',
         imageFile: ''
       }
+    },
+    itemComentario: {
+      _id: '',
+      texto: '',
+      idPublicacion: '',
+      user: '',
+      fechaComentario: '',
+      imagen: {
+        imageName: '',
+        imageUrl: '',
+        imageFile: ''
+      }
+    },
+    itemLikes: {
+      _id: '',
+      idPublicacion: '',
+      user: ''
     },
     computed: {
     },
@@ -242,7 +350,7 @@ export default {
   },
   methods: {
     listarCategorias () {
-      Api.get('categorias')
+      Api.get('categoria')
         .then((response) => {
           this.categorias = response.data
           console.log(this.categorias)
@@ -305,6 +413,7 @@ export default {
     initialize () {
       this.listarCategorias()
       this.listarPublicaciones()/* inicia el metodo de listar */
+      this.listarComentarios()
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
@@ -312,10 +421,21 @@ export default {
         .then(response => {
           this.publicaciones = response.data
           console.log(this.publicaciones)
-          console.log('ruta completa: ' + this.axios.defaults.baseURL)
         })
         .catch(e => {
           console.log('se ejecuta error')
+          console.log('error' + e)
+        })
+    },
+    listarComentarios () {
+      console.log(this.editedItem._id)
+      Api.get('publicaciones/' + this.editedItem._id + '/comentarios')
+        .then((response) => {
+          this.comentarios = response.data
+          console.log('comentarios: ' + this.comentarios)
+        })
+        .catch((e) => {
+          console.log('se ejecuta a ver comentarios')
           console.log('error' + e)
         })
     },
@@ -328,6 +448,7 @@ export default {
       this.editedIndex = this.publicaciones.indexOf(publicacion)
       this.editedItem = Object.assign({}, publicacion)
       this.dialogShow = true
+      this.listarComentarios()
     },
     deleteItem (publicacion) {
       const index = this.publicaciones.indexOf(publicacion)
@@ -359,6 +480,33 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       }, 300)
+    },
+    comentar () {
+      Api.post('publicaciones/' + this.editedItem._id + '/comentarios', {
+        texto: this.itemComentario.texto,
+        idPublicacion: this.editedItem._id
+      })
+        .then((response) => {
+          console.log('comentarios: ' + response.data)
+          this.comentarios.push(response.data)
+          this.listarComentarios()
+        })
+        .catch((e) => {
+          console.log('se ejecuta a ver comentarios')
+          console.log('error' + e)
+        })
+    },
+    likes (publicacion) {
+      console.log('id publi dd: ' + publicacion._id)
+      Api.put('publicaciones/' + publicacion._id + '/like', {
+      })
+        .then((response) => {
+          this.listarPublicaciones()
+          console.log('likes: ' + response.data)
+        })
+        .catch((e) => {
+          console.log('error' + e)
+        })
     }
   }
 }

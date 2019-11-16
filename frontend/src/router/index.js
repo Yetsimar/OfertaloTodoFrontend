@@ -54,7 +54,7 @@ const router = new Router({
       name: 'Registro',
       component: Registro,
       meta: {
-        isPublic: false
+        isPublic: true
       }
     }
   ]

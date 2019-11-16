@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Barra app></Barra>
+    <Menu v-if='sesion._id'></Menu>
     <v-content>
       <div class="container">
         <router-view/>
@@ -11,16 +11,25 @@
 </template>
 
 <script>
-import Barra from './components/barra.vue'
+import Menu from './components/menu.vue'
 import Footer from './components/footer.vue'
 export default {
   name: 'App',
-  components: { Barra, Footer },
+  components: { Menu, Footer },
+  sesion: [],
   created () {
-    this.initialize()
+    this.sesion = this.$store.state.usuario
+    console.log(this.$store.state.usuario)
+    if (this.$route.meta.isPublic === false && !this.$store.state.token) {
+      window.location.href = '/'
+    }
   },
   methods: {
-    initialize () {}
+    logout () {
+      this.$store.dispatch('logout')
+      this.$cookies.set('token', [], '5D', '')
+      window.location.href = '/'
+    }
   }
 }
 </script>

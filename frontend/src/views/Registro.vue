@@ -122,7 +122,7 @@ export default {
     initialize () {
     },
     save () {
-      Api.post('/usuario', this.form)
+      Api.post('/usuarios', this.form)
         .then(res => {
           if (res.data.status === 'denied') {
             this.$swal(

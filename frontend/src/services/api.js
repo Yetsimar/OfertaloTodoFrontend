@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { server, port } from './environment'
-/* eslint-disable */
+import VueCookies from 'vue-cookies'
 export default () => {
   return axios.create({
     baseURL: `${server}:${port}/api/`,
     headers: {
-      'Authorization': 'Bearer ' + $cookies.get('token'),
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + $cookies.get('token')
     }
   })
 }

@@ -1,17 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   strict: true,
+  plugins: [createPersistedState()],
   state: {
     tokenappolo: '',
     usuario: []
   },
   mutations: {
     login (state, data) {
-      state.usuario = data.user
+      state.usuario = data.usuario
       state.tokenappolo = data.token
     },
     logout (state) {

@@ -36,8 +36,9 @@ export default {
   },
   data: () => ({
     show3: false,
-    drawer: null,
+    drawer: true,
     form: {
+      token: 'a82kddn282020',
       email: '',
       password: ''
     }
@@ -51,10 +52,15 @@ export default {
       Api.post('/login', this.form)
         .then(res => {
           if (res.data.status === 'Success') {
-            console.log('pasa por aqui')
+            console.log(res.data)
             this.$store.dispatch('login', res.data)
             this.$cookies.set('token', res.data.token, '5D', '')
-            window.location.href = '/home'
+            this.$swal(
+              'Felicidades.!',
+              'haz iniciado sesion con éxito',
+              'success'
+            )
+            // window.location.href = '/home'
           } else {
             this.$swal(
               'Oops...',

@@ -123,9 +123,6 @@ export default {
     initialize () {
       console.log('sssss')
       console.log('Id Usuario: ' + this.$store.state.usuario)
-      
-        this.idEmpresaArray.push({text: data.nombre, value: data.idEmpresa})
-      
     },
     ObtenerUsuario () {
       Api.get('/perfil/')

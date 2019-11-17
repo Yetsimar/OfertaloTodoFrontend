@@ -44,20 +44,19 @@
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title value="titulo" v-model="editedItem.titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
-        <v-list-item-subtitle>Publicado por:Usuario  </v-list-item-subtitle>
+        <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}} </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <img :src='ruta + `${publicacion.imagen}`' style='width: 100%; height: 100%;'>
     <v-card-text>
-      {{publicacion.descripcion}}
-      <br>
-      <div v-for="categoria in publicacion " :key="categoria._id">
-        {{categoria.nombre}}
-      </div>
+      <p class="blue--text">{{publicacion.categoria.nombre}}</p>
+      <p>{{publicacion.descripcion}}</p>
     </v-card-text>
-    <v-card-text>
+    <div class="text-right">
+    <v-card-text class="green--text">
       ${{publicacion.precio}}
     </v-card-text>
+    </div>
     <v-card-actions>
        <v-icon color="warning" title="Editar"  class="mr-2"  @click="editItem(publicacion)" >
          mdi-pencil

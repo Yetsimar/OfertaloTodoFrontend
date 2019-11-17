@@ -22,7 +22,7 @@
         </template>
 
         <v-list-item
-          v-for="categoria in categorias" :key="categoria._id" @click="funcionvaqui">
+          v-for="categoria in categorias" :key="categoria._id">
           <v-list-item-content>
             <v-list-item-title v-text="categoria.nombre"></v-list-item-title>
           </v-list-item-content>
@@ -30,14 +30,13 @@
       </v-list-group>
     </v-list>
     <!-- ..................lista 2........................ -->
-       <v-h3 class="black--text">
+       <h3 class="black--text">
            <v-icon  color="warning">mdi-star</v-icon>
-           Vendedores destacados</v-h3>
+           Vendedores destacados</h3>
        <v-list>
       <v-list-item
         v-for="item in items2"
         :key="item.title"
-        @click="ss"
       >
         <v-list-item-icon>
           <v-icon v-if="item.icon" color="pink">mdi-star</v-icon>
@@ -54,9 +53,9 @@
     </v-list>
    <!-- .............rango de..................   -->
     <!-- ..................lista 2........................ -->
-       <v-h3 class="black--text">
+       <h3 class="black--text">
            <v-icon  color="warning"></v-icon>
-           Rango de precios</v-h3>
+           Rango de precios</h3>
        <v-list>
       <v-list-item>
         <v-list-item-content>
@@ -93,20 +92,20 @@
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title value="titulo" v-model="editedItem.titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
-        <v-list-item-subtitle>Publicado por:Usuario  </v-list-item-subtitle>
+        <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}}</v-list-item-subtitle>
+        <spam>{{publicacion.Create_at | moment("DD-MM-YY")}} </spam>
       </v-list-item-content>
     </v-list-item>
     <img :src='ruta + `${publicacion.imagen}`' style='width: 100%; height: 100%;'>
     <v-card-text>
-      {{publicacion.descripcion}}
-      <br>
-      <div v-for="categoria in publicacion " :key="categoria._id">
-        {{categoria.nombre}}
-      </div>
+      <p class="blue--text">{{publicacion.categoria.nombre}}</p>
+      <p>{{publicacion.descripcion}}</p>
     </v-card-text>
-    <v-card-text>
+    <div class="text-right">
+    <v-card-text class="green--text">
       ${{publicacion.precio}}
     </v-card-text>
+    </div>
     <v-card-actions>
       <v-btn icon>
       <v-icon color="indigo"  title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
@@ -133,7 +132,7 @@
   </v-card>
    </v-col>
      <!-- View show -->
-            <v-dialog v-model="dialogShow" max-width="500px">
+            <v-dialog v-model="dialogShow" max-width="1000px">
               <v-card>
                 <v-card-title>
                   <span class="headline">Detalles de Publicacion</span>
@@ -141,26 +140,43 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
+                       <v-form enctype="">
+                        <v-list-item  >
+                    <v-list-item-content>
+                      <div> Datos del Vendedor</div>
                       <v-col cols="12" sm="12" md="6">
-                        <v-text-field v-model="editedItem.titulo" disabled="true" label="Titulo"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
+                         <v-list-item-avatar color="grey">
+                      <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+                    </v-list-item-avatar>
+                     <v-text-field v-model="editedItem.user.nombre" readonly  label="Nombre" ></v-text-field>
+                     </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                     <v-text-field v-model="editedItem.user.apellido" readonly  label="Apellido" ></v-text-field>
+                     </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                     <v-text-field v-model="editedItem.user.telefono" readonly  label="telefono" ></v-text-field>
+                     </v-col>
+                     <v-col cols="12" sm="12" md="6">
+                     <v-text-field v-model="editedItem.user.email" readonly  label="Correo" ></v-text-field>
+                     </v-col>
+                     <v-divider></v-divider>
+                   <v-col cols="12" sm="12" md="6">
                       <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
                       </v-col>
-                      <v-col cols="12" sm="12" md="6">
-                        <v-text-field v-model="editedItem.descripcion" disabled="true" label="Descripcion" ></v-text-field>
+                   <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.titulo" readonly  label="Titulo" ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="6">
-                        <v-text-field v-model="editedItem.precio" disabled="true" label="Precio" ></v-text-field>
+                        <v-text-field v-model="editedItem.descripcion" readonly  label="Descripcion" ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="6">
-                        <v-select v-model="editedItem.categoria" :items="idCategoriasArray" disabled="true" label="Categoria" ></v-select>
+                        <v-text-field v-model="editedItem.precio" color="blue" readonly label="Precio($)" ></v-text-field>
                       </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-container>
-                <!-- .....................Comentar........................ -->
+                      <v-col cols="12" sm="12" md="6">
+                        <v-select v-model="editedItem.categoria._id" :items="idCategoriasArray"   readonly  label="Categoria" ></v-select>
+                      </v-col>
+                       <v-col cols="12" sm="12" md="6">
+     <v-container>
                 <div class="text-center">
                       <v-dialog v-model="menu2" persistent max-width="500px">
                     <template v-slot:activator="{ on }">
@@ -178,26 +194,6 @@
                           <div class="text-right">
                           <v-btn text @click="menu2 = false">Salir</v-btn>
                           </div>
-                          <v-list>
-                            <v-list-item>
-                              <v-list-item-avatar>
-                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
-                              </v-list-item-avatar>
-                              <v-list-item-content>
-                                <v-list-item-title>John Leider</v-list-item-title>
-                                <v-list-item-subtitle>Founder of Vuetify.js</v-list-item-subtitle>
-                              </v-list-item-content>
-                              <v-list-item-action>
-                                <v-btn
-                                  :class="fav ? 'red--text' : ''"
-                                  icon
-                                  @click="fav = !fav"
-                                >
-                                  <v-icon>mdi-heart</v-icon>
-                                </v-btn>
-                              </v-list-item-action>
-                            </v-list-item>
-                          </v-list>
                           <v-divider></v-divider>
                           <v-list>
                             <v-list-item>
@@ -231,6 +227,14 @@
                        </v-dialog>
                     </div>
                     </v-container>
+                         </v-col>
+                      </v-list-item-content>
+                  </v-list-item>
+                  </v-form>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <!-- .....................Comentar........................ -->
                  <!--  .................fin comentar................. -->
                           </v-card>
             </v-dialog>
@@ -276,6 +280,12 @@ export default {
       titulo: '',
       descripcion: '',
       categoria: '',
+      user: {
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        email: ''
+      },
       precio: '',
       likes: '',
       imagen: {
@@ -291,6 +301,12 @@ export default {
       precio: '',
       likes: '',
       categoria: '',
+      user: {
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        email: ''
+      },
       imagen: {
         imageName: '',
         imageUrl: '',
@@ -503,6 +519,21 @@ export default {
         .then((response) => {
           this.listarPublicaciones()
           console.log('likes: ' + response.data)
+          const Toast = this.$swal.mixin({
+            type: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            onOpen: (toast) => {
+              toast.addEventListener('mouseenter', Toast.stopTimer)
+              toast.addEventListener('mouseleave', Toast.resumeTimer)
+            }
+          })
+          Toast.fire({
+            title: 'Has dado Me gusta'
+          })
         })
         .catch((e) => {
           console.log('error' + e)

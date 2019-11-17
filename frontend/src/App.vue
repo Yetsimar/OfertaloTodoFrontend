@@ -6,7 +6,7 @@
         <router-view/>
       </div>
     </v-content>
-    <Footer></Footer>
+    <Footer v-if='sesion._id'></Footer>
   </v-app>
 </template>
 

@@ -78,7 +78,7 @@
             </v-col>
              </v-row>
            <v-row align="center" justify="center">
-            <h3>¿Ya tienes cuenta? <a href="./Login" style="color:#12ceeb;">has click aquí</a></h3>
+            <h3>¿Ya tienes cuenta? <a href="./" style="color:#12ceeb;">has click aquí</a></h3>
             </v-row>
         </v-form>
       </v-flex>
@@ -124,21 +124,14 @@ export default {
     save () {
       Api.post('/usuarios', this.form)
         .then(res => {
-          if (res.data.status === 'denied') {
-            this.$swal(
-              'Oops...',
-              'El usuario ya existe, por favor verifique su información',
-              'error'
-            )
-          } else {
-            this.$swal(
-              'Felicidades.!',
-              'Te has registrado exitosamente',
-              'success'
-            )
-            this.initialize()
-            window.location.href = '/login'
-          }
+          this.form = Object.assign({}, this.defaultForm)
+          this.$swal(
+            'Felicidades.!',
+            'Registro realizado exitosamente.',
+            'success'
+          )
+          this.initialize()
+          window.location.href = '/'
         })
         .catch(err => {
           console.log(err)

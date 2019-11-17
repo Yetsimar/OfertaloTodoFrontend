@@ -5,7 +5,9 @@ import swal from 'vue-sweetalert2'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Registro from '../views/Registro.vue'
+import Publicaciones from '../views/Publicaciones.vue'
 import Publicar from '../views/Publicar.vue'
+import Perfil from '../views/Perfil.vue'
 import Categoria from '../views/Categoria.vue'
 import LoginApi from '@/services/login'
 
@@ -33,9 +35,25 @@ const router = new Router({
       }
     },
     {
+      path: '/Perfil',
+      name: 'Perfil',
+      component: Perfil,
+      meta: {
+        isPublic: false
+      }
+    },
+    {
       path: '/Publicar',
       name: 'Publicar',
       component: Publicar,
+      meta: {
+        isPublic: false
+      }
+    },
+    {
+      path: '/Publicaciones',
+      name: 'Publicaciones',
+      component: Publicaciones,
       meta: {
         isPublic: false
       }
@@ -54,7 +72,7 @@ const router = new Router({
       name: 'Registro',
       component: Registro,
       meta: {
-        isPublic: false
+        isPublic: true
       }
     }
   ]

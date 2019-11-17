@@ -39,14 +39,6 @@
             <v-list-item-title>Inicio</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{name: 'Login'}">
-          <v-list-item-action>
-            <v-icon color="#11879a">mdi-account</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Iniciar Sesion</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
         <v-list-item v-if='menu1 === true' :to="{name: 'Categoria'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-format-list-bulleted</v-icon>
@@ -55,20 +47,28 @@
             <v-list-item-title>Categorias</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if='menu1 === false' :to="{name: 'Publicar'}">
-          <v-list-item-action>
-            <v-icon color="#11879a">mdi-newspaper-variant-multiple</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Publicar</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
         <v-list-item :to="{name: 'Publicaciones'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-newspaper-variant-multiple</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Publicaciones</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if='menu1 === false' :to="{name: 'Publicar'}">
+          <v-list-item-action>
+            <v-icon color="#11879a">mdi-newspaper</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Publicar</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :to="{name: 'Perfil'}">
+          <v-list-item-action>
+            <v-icon color="#11879a">mdi-account</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Perfil</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>

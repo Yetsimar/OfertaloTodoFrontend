@@ -38,7 +38,6 @@ export default {
     show3: false,
     drawer: true,
     form: {
-      token: 'a82kddn282020',
       email: '',
       password: ''
     }
@@ -60,7 +59,7 @@ export default {
               'haz iniciado sesion con éxito',
               'success'
             )
-            // window.location.href = '/home'
+            window.location.href = '/home'
           } else {
             this.$swal(
               'Oops...',

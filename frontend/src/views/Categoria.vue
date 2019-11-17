@@ -155,7 +155,7 @@ export default {
     },
     /* muestra en la tabla los categorias */
     listarCategoria () {
-      Api.get('categorias')
+      Api.get('categoria')
         .then(response => {
           this.categorias = response.data
         })
@@ -190,7 +190,7 @@ export default {
         if (result.value) {
           this.$swal('Borrado!', 'Su registro fue borrado.', 'success')
           this.categorias.splice(index, 1)
-          Api.delete('categorias/' + item._id)
+          Api.delete('categoria/' + item._id)
             .then(response => {
               console.log(response)
             })
@@ -215,7 +215,7 @@ export default {
           console.log('Datos guardados')
           console.log(this.editedItem)
           console.log(this.editedItem._id)
-          Api.put('categorias/' + this.editedItem._id, {
+          Api.put('categoria/' + this.editedItem._id, {
             nombre: this.editedItem.nombre
           })
             .then(response => {
@@ -229,7 +229,7 @@ export default {
 
           Object.assign(this.categorias[this.editedIndex], this.editedItem)
         } else {
-          Api.post('categorias', {
+          Api.post('categoria', {
             nombre: this.editedItem.nombre
           })
             .then(response => {

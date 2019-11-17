@@ -8,7 +8,10 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import cookies from 'vue-cookies'
 import 'sweetalert2/dist/sweetalert2.min.css'
-
+import VueMoment from 'vue-moment'
+const moment = require('moment')
+moment.locale('es')
+Vue.use(VueMoment, moment)
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(VueSweetalert2)

@@ -1,6 +1,6 @@
 <template>
-<v-container :items="publicaciones" >
-<v-row  justify="center" >
+<v-container  >
+<v-row  justify="center"  :items="publicaciones">
 <v-col cols="12" sm="8" md="4">
    <v-card >
      <v-toolbar flat color="indigo" dark>
@@ -187,8 +187,12 @@ export default {
     this.initialize()
   },
   methods: {
+    initialize () {
+      this.listarCategorias()
+      this.listarPublicaciones()/* inicia el metodo de listar */
+    },
     listarCategorias () {
-      Api.get('categorias')
+      Api.get('categoria')
         .then((response) => {
           this.categorias = response.data
           console.log(this.categorias)
@@ -247,10 +251,6 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
-    },
-    initialize () {
-      this.listarCategorias()
-      this.listarPublicaciones()/* inicia el metodo de listar */
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {

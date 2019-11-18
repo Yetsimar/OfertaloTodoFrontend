@@ -14,16 +14,6 @@
       >
          <img src="../assets/logo.png" width="200" height="80"/>
       </v-toolbar-title>
-      <v-text-field
-        flat
-        solo-inverted
-        hide-details
-        label="Buscar"
-        class="hidden-sm-and-down"
-        v-model='search'
-        append-icon='search'
-      >
-      </v-text-field>
       <v-spacer></v-spacer>
       <v-list>
         <v-list-tile-title> {{ nombre }} </v-list-tile-title>

@@ -120,8 +120,7 @@
         <v-icon color="error" title="+ Favoritos">mdi-heart</v-icon>
       </v-btn>
       <v-btn icon>
-        {{publicacion.vistas}}
-        <v-icon color="purple" title="Compartir">mdi-share-variant</v-icon>
+        <v-icon color="purple" title="Compartir"  @click="dialogCIem(publicacion)" >mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
     </v-form>
@@ -132,7 +131,7 @@
   </v-card>
    </v-col>
      <!-- View show -->
-            <v-dialog v-model="dialogShow" max-width="1000px">
+            <v-dialog v-model="dialogShow" max-width="500px">
               <v-card>
                 <v-card-title>
                   <span class="headline">Detalles de Publicacion</span>
@@ -238,7 +237,56 @@
                  <!--  .................fin comentar................. -->
                           </v-card>
             </v-dialog>
-            <!-- View show -->
+             <!-- View show -->
+            <v-dialog v-model="dialogC" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Compartir</span>
+                </v-card-title>
+
+                <v-card-text>
+                     <v-text-field  label="TiTulo" ></v-text-field>
+                  <v-card>
+                  <v-container>
+                    <v-row>
+                        <v-col cols="12" sm="12" md="6">
+                         <v-list-item-avatar color="grey">
+                      <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+                    </v-list-item-avatar>
+                     <v-text-field v-model="editedItem.user.nombre" readonly  label="Nombre" ></v-text-field>
+                     </v-col>
+                     <v-col cols="12" sm="12" md="6">
+                        </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                     <v-text-field v-model="editedItem.user.apellido" readonly  label="Apellido" ></v-text-field>
+                     </v-col>
+                     <v-divider></v-divider>
+                   <v-col cols="12" sm="12" md="6">
+                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
+                      </v-col>
+                   <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.titulo" readonly  label="Titulo" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.descripcion" readonly  label="Descripcion" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.precio" color="blue" readonly label="Precio($)" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-select v-model="editedItem.categoria._id" :items="idCategoriasArray"   readonly  label="Categoria" ></v-select>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                       <v-btn icon>
+                   <v-icon color="purple" title="Compartir" >mdi-share-variant</v-icon>
+                </v-btn>
+                </v-col>
+                    </v-row>
+                  </v-container>
+                  </v-card>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
     </v-row>
 </template>
 
@@ -247,10 +295,10 @@ import Api from '@/services/methods'
 import { server, port } from '@/services/environment'
 export default {
   data: () => ({
+    dialogC: false,
     fav: true,
     menu: false,
     menu2: false,
-    estado: false,
     dialogEdit: false,
     dialogShow: false,
     ruta: server + ':' + port,
@@ -340,6 +388,9 @@ export default {
         val || this.close()
       },
       dialogShow (val) {
+        val || this.close()
+      },
+      dialogC (val) {
         val || this.close()
       }
     },
@@ -465,6 +516,11 @@ export default {
       this.editedItem = Object.assign({}, publicacion)
       this.dialogShow = true
       this.listarComentarios()
+    },
+    dialogCIem (publicacion) {
+      this.editedIndex = this.publicaciones.indexOf(publicacion)
+      this.editedItem = Object.assign({}, publicacion)
+      this.dialogC = true
     },
     deleteItem (publicacion) {
       const index = this.publicaciones.indexOf(publicacion)

@@ -356,8 +356,8 @@ export default {
             console.log(response.data)
             this.$swal({
               type: 'success',
-              title: 'Registro exitoso',
-              text: 'Todos los cambios han guardados'
+              title: 'Felicidades',
+              text: 'Su publicación se ha realizado con éxito'
             })
             this.publicaciones.push(response.data)
           })

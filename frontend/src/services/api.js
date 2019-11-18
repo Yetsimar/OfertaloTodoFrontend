@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { server, port } from './environment'
-import VueCookies from 'vue-cookies'
+import $cookies from 'vue-cookies'
 export default () => {
   return axios.create({
     baseURL: `${server}:${port}/api/`,

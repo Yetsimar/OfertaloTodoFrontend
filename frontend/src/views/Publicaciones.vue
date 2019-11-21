@@ -91,9 +91,9 @@
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title value="titulo" v-model="editedItem.titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
+        <v-list-item-title value="titulo"  class="headline">{{publicacion.titulo}}</v-list-item-title>
         <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}}</v-list-item-subtitle>
-        <spam>{{publicacion.Create_at | moment("DD-MM-YY")}} </spam>
+        <span>{{publicacion.Create_at | moment("DD-MM-YY")}} </span>
       </v-list-item-content>
     </v-list-item>
     <img :src='ruta + `${publicacion.imagen}`' style='width: 100%; height: 100%;'>
@@ -126,6 +126,37 @@
     </v-form>
     </v-card>
   </v-col>
+      <!-- publicacion compartida -->
+    <v-col cols="12" sm="8" md="4"  v-for="compartir in compartidas" :key="compartir._id">
+      <v-card>
+      <v-form enctype="">
+    <v-list-item  :items="compartidas">
+      <v-list-item-avatar color="grey">
+        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title class="headline">{{compartir.titulo}}</v-list-item-title>
+        <v-list-item-subtitle class="blue--text">{{compartir.user.nombre}} {{compartir.user.apellido}} </v-list-item-subtitle>
+         <v-list-item-subtitle >Compartido de :{{compartir.delUsuario}}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <img :src='ruta + `${compartir.imagen}`' style='width: 100%; height: 100%;'>
+    <v-card-text>
+      <p class="blue--text">{{compartir.categoria.nombre}}</p>
+      <p>{{compartir.descripcion}}</p>
+    </v-card-text>
+    <div class="text-right">
+    <v-card-text class="green--text">
+      ${{compartir.precio}}
+    </v-card-text>
+    </div>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+    </v-form>
+    </v-card>
+  </v-col>
+  <!-- ....................fin de publicacion Compartida.................... -->
   </v-row>
    </v-card-text>
   </v-card>
@@ -245,7 +276,16 @@
                 </v-card-title>
 
                 <v-card-text>
-                     <v-text-field  label="TiTulo" ></v-text-field>
+                  <v-row>
+                  <v-col cols="10" sm="10" md="10">
+                     <v-text-field v-model="editedItem.tituloCompartido"  label="Titulo" ></v-text-field>
+                     </v-col>
+                      <v-col cols="2" sm="2" md="2">
+                       <v-btn icon @click="compartir()">
+                   <v-icon color="purple" title="Compartir" >mdi-share-variant</v-icon>
+                    </v-btn>
+                    </v-col>
+                      </v-row>
                   <v-card>
                   <v-container>
                     <v-row>
@@ -263,6 +303,8 @@
                      <v-divider></v-divider>
                    <v-col cols="12" sm="12" md="6">
                       <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
+                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
                       </v-col>
                    <v-col cols="12" sm="12" md="6">
                         <v-text-field v-model="editedItem.titulo" readonly  label="Titulo" ></v-text-field>
@@ -276,11 +318,6 @@
                       <v-col cols="12" sm="12" md="6">
                         <v-select v-model="editedItem.categoria._id" :items="idCategoriasArray"   readonly  label="Categoria" ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="12" md="6">
-                       <v-btn icon>
-                   <v-icon color="purple" title="Compartir" >mdi-share-variant</v-icon>
-                </v-btn>
-                </v-col>
                     </v-row>
                   </v-container>
                   </v-card>
@@ -304,6 +341,7 @@ export default {
     ruta: server + ':' + port,
     publicaciones: [],
     comentarios: [],
+    compartidas: [],
     img: '',
     editedIndex: -1,
     categorias: [],
@@ -325,6 +363,7 @@ export default {
     ],
     editedItem: {
       _id: '',
+      tituloCompartido: '',
       titulo: '',
       descripcion: '',
       categoria: '',
@@ -481,6 +520,7 @@ export default {
       this.listarCategorias()
       this.listarPublicaciones()/* inicia el metodo de listar */
       this.listarComentarios()
+      this.listarCompartidas()
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
@@ -491,6 +531,17 @@ export default {
         })
         .catch(e => {
           console.log('se ejecuta error')
+          console.log('error' + e)
+        })
+    },
+    listarCompartidas () {
+      Api.get('compartir')
+        .then(response => {
+          this.compartidas = response.data
+          console.log(this.compartidas)
+        })
+        .catch(e => {
+          console.log('Error al ver publicaciones compartidas')
           console.log('error' + e)
         })
     },
@@ -545,6 +596,7 @@ export default {
       })
     },
     close () {
+      this.dialogC = false
       this.dialog = false
       this.dialogEdit = false
       setTimeout(() => {
@@ -594,6 +646,64 @@ export default {
         .catch((e) => {
           console.log('error' + e)
         })
+    },
+    compartir () {
+      this.loading = true
+      const data = new FormData()
+      Object.keys(this.editedItem).map(key => {
+        if (Array.isArray(this.editedItem[key])) {
+          this.editedItem[key].forEach(val => {
+            if (typeof val === 'object' && val !== null) {
+              return data.append(`${key}[]`, JSON.stringify(val))
+            }
+            return data.append(`${key}[]`, val)
+          })
+        } else if (
+          typeof this.editedItem[key] === 'object' &&
+          this.editedItem[key] !== null
+        ) {
+          return data.append(key, JSON.stringify(this.editedItem[key]))
+        } else {
+          return data.append(key, this.editedItem[key])
+        }
+      })
+      if (this.editedItem.imagen.imageFile) {
+        data.append('imagen', this.editedItem.imagen.imageFile)
+      }
+      if (this.editedIndex > -1) {
+        console.log('nombre de la imagen: ' + this.editedItem.imagen)
+        let imagenCom = this.editedItem.imagen
+        Api.post('compartir', {
+          titulo: this.editedItem.tituloCompartido,
+          titulo2: this.editedItem.titulo,
+          descripcion: this.editedItem.descripcion,
+          categoria: this.editedItem.categoria,
+          precio: this.editedItem.precio,
+          delUsuario: this.editedItem.user.nombre + ' ' + this.editedItem.user.apellido,
+          imagen: imagenCom })
+          .then(response => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            console.log(response)
+            this.$swal({
+              type: 'success',
+              title: 'Publicacion Compartida',
+              text: 'has Compartido con exito'
+            })
+            this.close()
+          })
+          .catch(e => {
+            this.$swal({
+              type: 'error',
+              title: 'Error al Compartir',
+              text: 'Por verifique los datos e intente de nuevo'
+            })
+            console.log('error guardar....' + e)
+          })
+        Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
+      }
+      console.log('Datos guardados')
+      this.reset()
+      this.close()
     }
   }
 }

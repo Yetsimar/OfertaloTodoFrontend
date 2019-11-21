@@ -43,7 +43,7 @@
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title value="titulo" v-model="editedItem.titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
+        <v-list-item-title value="titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
         <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}} </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -77,6 +77,43 @@
     </v-form>
     </v-card>
   </v-col>
+    <!-- publicacion compartida -->
+    <v-col cols="12" sm="8" md="6"  v-for="compartir in compartidas" :key="compartir._id">
+      <v-card>
+      <v-form enctype="">
+    <v-list-item  :items="compartidas">
+      <v-list-item-avatar color="grey">
+        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title class="headline">{{compartir.titulo}}</v-list-item-title>
+        <v-list-item-subtitle class="blue--text">{{compartir.user.nombre}} {{compartir.user.apellido}} </v-list-item-subtitle>
+         <v-list-item-subtitle >Compartido de :{{compartir.delUsuario}}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <img :src='ruta + `${compartir.imagen}`' style='width: 100%; height: 100%;'>
+    <v-card-text>
+      <p class="blue--text">{{compartir.categoria.nombre}}</p>
+      <p>{{compartir.descripcion}}</p>
+    </v-card-text>
+    <div class="text-right">
+    <v-card-text class="green--text">
+      ${{compartir.precio}}
+    </v-card-text>
+    </div>
+    <v-card-actions>
+       <v-icon color="warning" title="Editar"  class="mr-2"  @click="editItem(compartir)" >
+         mdi-pencil
+        </v-icon>
+        <v-icon color="error" title="Eliminar"  class="mr-2"  v-on:click="deleteCompartir(compartir)" >
+         mdi-delete
+        </v-icon>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+    </v-form>
+    </v-card>
+  </v-col>
+  <!-- ....................fin de publicacion Compartida.................... -->
   </v-row>
    </v-card-text>
   </v-card>
@@ -126,6 +163,7 @@ export default {
     dialogEdit: false,
     ruta: server + ':' + port,
     publicaciones: [],
+    compartidas: [],
     img: '',
     editedIndex: -1,
     categorias: [],
@@ -189,6 +227,7 @@ export default {
     initialize () {
       this.listarCategorias()
       this.listarPublicaciones()/* inicia el metodo de listar */
+      this.listarCompartidas()
     },
     listarCategorias () {
       Api.get('categoria')
@@ -201,6 +240,17 @@ export default {
           console.log(this.idCategoriasArray)
         })
         .catch((e) => {
+          console.log('error' + e)
+        })
+    },
+    listarCompartidas () {
+      Api.get('misCompartidas')
+        .then(response => {
+          this.compartidas = response.data
+          console.log(this.compartidas)
+        })
+        .catch(e => {
+          console.log('Error al ver publicaciones compartidas')
           console.log('error' + e)
         })
     },
@@ -251,9 +301,9 @@ export default {
     reset () {
       this.$refs.form.reset()
     },
-    /* muestra en la tabla los proveedores */
+    /* muestra el catalogo de publicaciones del logeado */
     listarPublicaciones () {
-      Api.get('publicaciones')
+      Api.get('catalogo')
         .then(response => {
           this.publicaciones = response.data
           console.log(this.publicaciones)
@@ -285,6 +335,28 @@ export default {
           this.$swal('Borrado!', 'Su registro fue borrado.', 'success')
           this.publicaciones.splice(index, 1)
           Api.delete('publicaciones/' + publicacion._id)
+            .then(response => {
+              console.log(response)
+            })
+        }
+      })
+    },
+    deleteCompartir (compartir) {
+      const index = this.compartidas.indexOf(compartir)
+      this.$swal({
+        type: 'warning',
+        title: '¿Seguro que quiere borrar?',
+        text: 'No podrá revertir',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, borrar',
+        cancelButtonText: 'cancelar'
+      }).then(result => {
+        if (result.value) {
+          this.$swal('Borrado!', 'Su Publicacion fue  borrada.', 'success')
+          this.compartidas.splice(index, 1)
+          Api.delete('compartir/' + compartir._id)
             .then(response => {
               console.log(response)
             })

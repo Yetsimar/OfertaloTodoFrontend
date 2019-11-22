@@ -5,8 +5,8 @@
     <v-col cols= "50">
   <v-form>
    <v-row justify="center">
-  <v-avatar color="indigo" size="80">
-      <v-icon dark>mdi-account-circle</v-icon>
+  <v-avatar size="100">
+      <img :src='ruta + `${form.imagen}`' style='width: 100%; height: 100%;'>
     </v-avatar>
     </v-row>
   <v-row>
@@ -120,11 +120,18 @@
 </v-layout>
 </template>
 <script>
+import { server, port } from '@/services/environment'
 import Api from '@/services/methods'
 export default {
   data: () => ({
+    ruta: server + ':' + port,
     select: null,
     dialog: false,
+    imagen: {
+      imageName: '',
+      imageUrl: '',
+      imageFile: ''
+    },
     form: {
       _id: '',
       nombre: '',
@@ -155,6 +162,7 @@ export default {
       this.form.email = this.$store.state.usuario.email
       this.form.direccion = this.$store.state.usuario.direccion
       this.form.telefono = this.$store.state.usuario.telefono
+      this.form.imagen = this.$store.state.usuario.imagen
     },
     edit () {
       Api.put('/usuarios', this.editForm)

@@ -77,20 +77,32 @@
    <v-card >
    <v-toolbar flat color="indigo" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
     <v-toolbar-title class="white--text">Publicaciones</v-toolbar-title>
-    <v-spacer></v-spacer>
+       <v-card-title>
+       </v-card-title>
      </v-toolbar>
      <v-card-text>
+       <v-spacer></v-spacer>
+            <v-text-field
+              class="text-xs-center"
+              v-model="search"
+              :search ="search"
+              label="Búsqueda"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
   <v-row align="center" justify="center">
     <!-- publicacion 1 -->
-    <v-col cols="12" sm="8" md="4"  v-for="publicacion in publicaciones" :key="publicacion._id">
+    <v-col  cols="12" sm="8" md="4"  v-for="publicacion in filtrarPublicacion" :key="publicacion._id">
       <v-card>
-      <v-form enctype="">
-    <v-list-item  >
+      <v-form enctype="" >
+    <v-list-item :search="search"  >
       <v-list-item-avatar color="grey">
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title value="titulo"  class="headline">{{publicacion.titulo}}</v-list-item-title>
+        <v-list-item-title value="titulo"  class="headline">{{publicacion.titulo }}</v-list-item-title>
         <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}}</v-list-item-subtitle>
         <span>{{publicacion.Create_at | moment("DD-MM-YY")}} </span>
       </v-list-item-content>
@@ -98,7 +110,7 @@
     <img :src='ruta + `${publicacion.imagen}`' style='width: 100%; height: 100%;'>
     <v-card-text>
       <p class="blue--text">{{publicacion.categoria.nombre}}</p>
-      <p>{{publicacion.descripcion}}</p>
+      <p>{{publicacion.descripcion }}</p>
     </v-card-text>
     <div class="text-right">
     <v-card-text class="green--text">
@@ -109,9 +121,9 @@
       <v-btn icon>
       <v-icon color="indigo"  title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
         </v-btn>
-        <v-btn icon >
-      <v-icon color="error"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-heart</v-icon>
-        {{publicacion.likes}}
+        <v-btn icon @click="likes(publicacion)" >
+           {{publicacion.likes}}
+      <v-icon color="error"  title="Me gusta"  class="mr-2"  >mdi-heart</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon>
@@ -126,7 +138,7 @@
     </v-card>
   </v-col>
       <!-- publicacion compartida -->
-    <v-col cols="12" sm="8" md="4"  v-for="compartir in compartidas" :key="compartir._id">
+    <v-col cols="12" sm="8" md="4"  v-for="compartir in filtrarCompartidas" :key="compartir._id">
       <v-card>
       <v-form enctype="">
     <v-list-item  :items="compartidas">
@@ -333,6 +345,7 @@ export default {
     search: '',
     comentarios: [],
     compartidas: [],
+    cantLikes: [],
     img: '',
     editedIndex: -1,
     categorias: [],
@@ -408,25 +421,6 @@ export default {
       idPublicacion: '',
       user: ''
     },
-    computed: {
-    },
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogEdit (val) {
-        val || this.close()
-      },
-      dialogShow (val) {
-        val || this.close()
-      },
-      dialogC (val) {
-        val || this.close()
-      },
-      dialogCom (val) {
-        val || this.close()
-      }
-    },
     valid: true,
     name: '',
     nameRules: [
@@ -445,6 +439,47 @@ export default {
     select: null,
     checkbox: false
   }),
+  computed: {
+    formTitleShow () {
+      return 'Titulo nuevo'
+    },
+    /* ..........busca publicacion............. */
+    filtrarPublicacion: function () {
+      return this.publicaciones.filter((publicacion) => {
+        return publicacion.titulo.match(this.search) ||
+         publicacion.descripcion.match(this.search) ||
+         publicacion.categoria.nombre.match(this.search) ||
+         publicacion.user.nombre.match(this.search) ||
+         publicacion.user.apellido.match(this.search)
+      })
+    },
+    filtrarCompartidas: function () {
+      return this.compartidas.filter((compartir) => {
+        return compartir.titulo.match(this.search) ||
+         compartir.descripcion.match(this.search) ||
+         compartir.categoria.nombre.match(this.search) ||
+         compartir.user.nombre.match(this.search) ||
+         compartir.user.apellido.match(this.search)
+      })
+    }
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
+    },
+    dialogEdit (val) {
+      val || this.close()
+    },
+    dialogShow (val) {
+      val || this.close()
+    },
+    dialogC (val) {
+      val || this.close()
+    },
+    dialogCom (val) {
+      val || this.close()
+    }
+  },
   created () {
     this.initialize()
   },
@@ -459,7 +494,7 @@ export default {
           })
           console.log(this.idCategoriasArray)
         })
-        .catch((e) => {
+        .catch(e => {
           console.log('error' + e)
         })
     },
@@ -513,12 +548,10 @@ export default {
     initialize () {
       this.listarCategorias()
       this.listarPublicaciones()/* inicia el metodo de listar */
-      this.listarComentarios()
       this.listarCompartidas()
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
-      this.listarComentarios()
       Api.get('publicaciones')
         .then(response => {
           this.publicaciones = response.data
@@ -560,7 +593,7 @@ export default {
           this.comentarios = response.data
           console.log('comentarios: ' + this.comentarios)
         })
-        .catch((e) => {
+        .catch(e => {
           console.log('se ejecuta a ver comentarios')
           console.log('error' + e)
         })
@@ -584,7 +617,6 @@ export default {
     dialogComentar (publicacion) {
       this.editedIndex = this.publicaciones.indexOf(publicacion)
       this.editedItem = Object.assign({}, publicacion)
-      this.listarComentarios()
       this.dialogCom = true
       this.listarComentarios()
     },
@@ -630,14 +662,14 @@ export default {
           this.comentarios.push(response.data)
           this.listarComentarios()
         })
-        .catch((e) => {
+        .catch(e => {
           console.log('se ejecuta a ver comentarios')
           console.log('error' + e)
         })
     },
     likes (publicacion) {
       console.log('id publi dd: ' + publicacion._id)
-      Api.put('publicaciones/' + publicacion._id + '/like', {
+      Api.post('publicaciones/' + publicacion._id + '/like', {
       })
         .then((response) => {
           this.listarPublicaciones()
@@ -658,7 +690,19 @@ export default {
             title: 'Has dado Me gusta'
           })
         })
-        .catch((e) => {
+        .catch(e => {
+          console.log('error' + e)
+        })
+    },
+    contadorLikes (publicacion) {
+      console.log('id publi dd: ' + publicacion._id)
+      Api.get('publicaciones/' + publicacion._id + '/like', {
+      })
+        .then((response) => {
+          let nro = response.data
+          console.log('Nro likes: ' + nro)
+        })
+        .catch(e => {
           console.log('error' + e)
         })
     },

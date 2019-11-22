@@ -20,7 +20,6 @@
             <v-list-item-title v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-
         <v-list-item
           v-for="categoria in categorias" :key="categoria._id">
           <v-list-item-content>
@@ -91,9 +90,9 @@
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title value="titulo" v-model="editedItem.titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
+        <v-list-item-title value="titulo"  class="headline">{{publicacion.titulo}}</v-list-item-title>
         <v-list-item-subtitle class="blue--text">{{publicacion.user.nombre}} {{publicacion.user.apellido}}</v-list-item-subtitle>
-        <spam>{{publicacion.Create_at | moment("DD-MM-YY")}} </spam>
+        <span>{{publicacion.Create_at | moment("DD-MM-YY")}} </span>
       </v-list-item-content>
     </v-list-item>
     <img :src='ruta + `${publicacion.imagen}`' style='width: 100%; height: 100%;'>
@@ -111,28 +110,58 @@
       <v-icon color="indigo"  title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
         </v-btn>
         <v-btn icon >
-      <v-icon color="blue lighten-2"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-thumb-up </v-icon>
+      <v-icon color="error"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-heart</v-icon>
         {{publicacion.likes}}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon>
         {{publicacion.vistas}}
-        <v-icon color="error" title="+ Favoritos">mdi-heart</v-icon>
+        <v-icon color="blue darken-2" title="Comentar" @click="dialogComentar(publicacion)">mdi-message-text</v-icon>
       </v-btn>
       <v-btn icon>
-        {{publicacion.vistas}}
-        <v-icon color="purple" title="Compartir">mdi-share-variant</v-icon>
+        <v-icon color="purple" title="Compartir"  @click="dialogCIem(publicacion)" >mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
     </v-form>
     </v-card>
   </v-col>
+      <!-- publicacion compartida -->
+    <v-col cols="12" sm="8" md="4"  v-for="compartir in compartidas" :key="compartir._id">
+      <v-card>
+      <v-form enctype="">
+    <v-list-item  :items="compartidas">
+      <v-list-item-avatar color="grey">
+        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title class="headline">{{compartir.titulo}}</v-list-item-title>
+        <v-list-item-subtitle class="blue--text">{{compartir.user.nombre}} {{compartir.user.apellido}} </v-list-item-subtitle>
+         <v-list-item-subtitle >Compartido de :{{compartir.delUsuario}}</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+    <img :src='ruta + `${compartir.imagen}`' style='width: 100%; height: 100%;'>
+    <v-card-text>
+      <p class="blue--text">{{compartir.categoria.nombre}}</p>
+      <p>{{compartir.descripcion}}</p>
+    </v-card-text>
+    <div class="text-right">
+    <v-card-text class="green--text">
+      ${{compartir.precio}}
+    </v-card-text>
+    </div>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+    </v-form>
+    </v-card>
+  </v-col>
+  <!-- ....................fin de publicacion Compartida.................... -->
   </v-row>
    </v-card-text>
   </v-card>
    </v-col>
      <!-- View show -->
-            <v-dialog v-model="dialogShow" max-width="1000px">
+            <v-dialog v-model="dialogShow" max-width="500px">
               <v-card>
                 <v-card-title>
                   <span class="headline">Detalles de Publicacion</span>
@@ -178,21 +207,24 @@
                        <v-col cols="12" sm="12" md="6">
      <v-container>
                 <div class="text-center">
-                      <v-dialog v-model="menu2" persistent max-width="500px">
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        color="indigo"
-                        dark
-                        v-on="on"
-                        @click="listarComentarios()"
-                      >
-                        Comentar
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                    </template>
+                    </div>
+                    </v-container>
+                         </v-col>
+                      </v-list-item-content>
+                  </v-list-item>
+                  </v-form>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <!-- .....................Comentar........................ -->
+                 <!--  .................fin comentar................. -->
+                          </v-card>
+            </v-dialog>
+            <!-- ..................................Comentario................. -->
+             <v-dialog v-model="dialogCom" persistent max-width="500px">
                         <v-card>
                           <div class="text-right">
-                          <v-btn text @click="menu2 = false">Salir</v-btn>
+                          <v-btn text @click="dialogCom = false">Salir</v-btn>
                           </div>
                           <v-divider></v-divider>
                           <v-list>
@@ -204,7 +236,7 @@
                           </v-list>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn text @click="menu2 = false">Cancelar</v-btn>
+                            <v-btn text @click="dialogCom = false">Cancelar</v-btn>
                             <v-btn color="primary" text @click="comentar()">Comentar</v-btn>
                           </v-card-actions>
                          <p class="text-center">Comentarios</p>
@@ -225,20 +257,63 @@
                           </v-list>
                         </v-card>
                        </v-dialog>
-                    </div>
-                    </v-container>
-                         </v-col>
-                      </v-list-item-content>
-                  </v-list-item>
-                  </v-form>
+            <!-- ....................................fin comentario............... -->
+             <!-- View show -->
+            <v-dialog v-model="dialogC" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Compartir</span>
+                </v-card-title>
+
+                <v-card-text>
+                  <v-row>
+                  <v-col cols="10" sm="10" md="10">
+                     <v-text-field v-model="editedItem.tituloCompartido"  label="Titulo" ></v-text-field>
+                     </v-col>
+                      <v-col cols="2" sm="2" md="2">
+                       <v-btn icon @click="compartir()">
+                   <v-icon color="purple" title="Compartir" >mdi-share-variant</v-icon>
+                    </v-btn>
+                    </v-col>
+                      </v-row>
+                  <v-card>
+                  <v-container>
+                    <v-row>
+                        <v-col cols="12" sm="12" md="6">
+                         <v-list-item-avatar color="grey">
+                      <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+                    </v-list-item-avatar>
+                     <v-text-field v-model="editedItem.user.nombre" readonly  label="Nombre" ></v-text-field>
+                     </v-col>
+                     <v-col cols="12" sm="12" md="6">
+                        </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                     <v-text-field v-model="editedItem.user.apellido" readonly  label="Apellido" ></v-text-field>
+                     </v-col>
+                     <v-divider></v-divider>
+                   <v-col cols="12" sm="12" md="6">
+                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
+                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
+                      </v-col>
+                   <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.titulo" readonly  label="Titulo" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.descripcion" readonly  label="Descripcion" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-text-field v-model="editedItem.precio" color="blue" readonly label="Precio($)" ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="6">
+                        <v-select v-model="editedItem.categoria._id" :items="idCategoriasArray"   readonly  label="Categoria" ></v-select>
+                      </v-col>
                     </v-row>
                   </v-container>
+                  </v-card>
                 </v-card-text>
-                <!-- .....................Comentar........................ -->
-                 <!--  .................fin comentar................. -->
-                          </v-card>
+              </v-card>
             </v-dialog>
-            <!-- View show -->
     </v-row>
 </template>
 
@@ -247,15 +322,17 @@ import Api from '@/services/methods'
 import { server, port } from '@/services/environment'
 export default {
   data: () => ({
+    dialogC: false,
     fav: true,
     menu: false,
-    menu2: false,
-    estado: false,
+    dialogCom: false,
     dialogEdit: false,
     dialogShow: false,
     ruta: server + ':' + port,
     publicaciones: [],
+    search: '',
     comentarios: [],
+    compartidas: [],
     img: '',
     editedIndex: -1,
     categorias: [],
@@ -277,6 +354,7 @@ export default {
     ],
     editedItem: {
       _id: '',
+      tituloCompartido: '',
       titulo: '',
       descripcion: '',
       categoria: '',
@@ -340,6 +418,12 @@ export default {
         val || this.close()
       },
       dialogShow (val) {
+        val || this.close()
+      },
+      dialogC (val) {
+        val || this.close()
+      },
+      dialogCom (val) {
         val || this.close()
       }
     },
@@ -430,9 +514,11 @@ export default {
       this.listarCategorias()
       this.listarPublicaciones()/* inicia el metodo de listar */
       this.listarComentarios()
+      this.listarCompartidas()
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
+      this.listarComentarios()
       Api.get('publicaciones')
         .then(response => {
           this.publicaciones = response.data
@@ -440,6 +526,30 @@ export default {
         })
         .catch(e => {
           console.log('se ejecuta error')
+          console.log('error' + e)
+        })
+    },
+    /*   buscarCategoria (idCategoria) {
+      Api.get('publicaciones')
+        .then(response => {
+          if(response.data){
+          this.publicaciones = response.data
+          console.log(this.publicaciones)
+          }
+        })
+        .catch(e => {
+          console.log('se ejecuta error')
+          console.log('error' + e)
+        })
+    }, */
+    listarCompartidas () {
+      Api.get('compartir')
+        .then(response => {
+          this.compartidas = response.data
+          console.log(this.compartidas)
+        })
+        .catch(e => {
+          console.log('Error al ver publicaciones compartidas')
           console.log('error' + e)
         })
     },
@@ -466,6 +576,18 @@ export default {
       this.dialogShow = true
       this.listarComentarios()
     },
+    dialogCIem (publicacion) {
+      this.editedIndex = this.publicaciones.indexOf(publicacion)
+      this.editedItem = Object.assign({}, publicacion)
+      this.dialogC = true
+    },
+    dialogComentar (publicacion) {
+      this.editedIndex = this.publicaciones.indexOf(publicacion)
+      this.editedItem = Object.assign({}, publicacion)
+      this.listarComentarios()
+      this.dialogCom = true
+      this.listarComentarios()
+    },
     deleteItem (publicacion) {
       const index = this.publicaciones.indexOf(publicacion)
       this.$swal({
@@ -489,6 +611,7 @@ export default {
       })
     },
     close () {
+      this.dialogC = false
       this.dialog = false
       this.dialogEdit = false
       setTimeout(() => {
@@ -538,6 +661,64 @@ export default {
         .catch((e) => {
           console.log('error' + e)
         })
+    },
+    compartir () {
+      this.loading = true
+      const data = new FormData()
+      Object.keys(this.editedItem).map(key => {
+        if (Array.isArray(this.editedItem[key])) {
+          this.editedItem[key].forEach(val => {
+            if (typeof val === 'object' && val !== null) {
+              return data.append(`${key}[]`, JSON.stringify(val))
+            }
+            return data.append(`${key}[]`, val)
+          })
+        } else if (
+          typeof this.editedItem[key] === 'object' &&
+          this.editedItem[key] !== null
+        ) {
+          return data.append(key, JSON.stringify(this.editedItem[key]))
+        } else {
+          return data.append(key, this.editedItem[key])
+        }
+      })
+      if (this.editedItem.imagen.imageFile) {
+        data.append('imagen', this.editedItem.imagen.imageFile)
+      }
+      if (this.editedIndex > -1) {
+        console.log('nombre de la imagen: ' + this.editedItem.imagen)
+        let imagenCom = this.editedItem.imagen
+        Api.post('compartir', {
+          titulo: this.editedItem.tituloCompartido,
+          titulo2: this.editedItem.titulo,
+          descripcion: this.editedItem.descripcion,
+          categoria: this.editedItem.categoria,
+          precio: this.editedItem.precio,
+          delUsuario: this.editedItem.user.nombre + ' ' + this.editedItem.user.apellido,
+          imagen: imagenCom })
+          .then(response => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            console.log(response)
+            this.$swal({
+              type: 'success',
+              title: 'Publicacion Compartida',
+              text: 'has Compartido con exito'
+            })
+            this.close()
+          })
+          .catch(e => {
+            this.$swal({
+              type: 'error',
+              title: 'Error al Compartir',
+              text: 'Por verifique los datos e intente de nuevo'
+            })
+            console.log('error guardar....' + e)
+          })
+        Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
+      }
+      console.log('Datos guardados')
+      this.reset()
+      this.close()
     }
   }
 }

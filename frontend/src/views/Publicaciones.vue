@@ -20,7 +20,6 @@
             <v-list-item-title v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-
         <v-list-item
           v-for="categoria in categorias" :key="categoria._id">
           <v-list-item-content>
@@ -111,13 +110,13 @@
       <v-icon color="indigo"  title="Ver detalles"  class="mr-2" @click="ShowItem(publicacion)">mdi-eye</v-icon>
         </v-btn>
         <v-btn icon >
-      <v-icon color="blue lighten-2"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-thumb-up </v-icon>
+      <v-icon color="error"  title="Me gusta"  class="mr-2"  @click="likes(publicacion)" >mdi-heart</v-icon>
         {{publicacion.likes}}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon>
         {{publicacion.vistas}}
-        <v-icon color="error" title="+ Favoritos">mdi-heart</v-icon>
+        <v-icon color="blue darken-2" title="Comentar" @click="dialogComentar(publicacion)">mdi-message-text</v-icon>
       </v-btn>
       <v-btn icon>
         <v-icon color="purple" title="Compartir"  @click="dialogCIem(publicacion)" >mdi-share-variant</v-icon>
@@ -208,21 +207,24 @@
                        <v-col cols="12" sm="12" md="6">
      <v-container>
                 <div class="text-center">
-                      <v-dialog v-model="menu2" persistent max-width="500px">
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        color="indigo"
-                        dark
-                        v-on="on"
-                        @click="listarComentarios()"
-                      >
-                        Comentar
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                    </template>
+                    </div>
+                    </v-container>
+                         </v-col>
+                      </v-list-item-content>
+                  </v-list-item>
+                  </v-form>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <!-- .....................Comentar........................ -->
+                 <!--  .................fin comentar................. -->
+                          </v-card>
+            </v-dialog>
+            <!-- ..................................Comentario................. -->
+             <v-dialog v-model="dialogCom" persistent max-width="500px">
                         <v-card>
                           <div class="text-right">
-                          <v-btn text @click="menu2 = false">Salir</v-btn>
+                          <v-btn text @click="dialogCom = false">Salir</v-btn>
                           </div>
                           <v-divider></v-divider>
                           <v-list>
@@ -234,7 +236,7 @@
                           </v-list>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn text @click="menu2 = false">Cancelar</v-btn>
+                            <v-btn text @click="dialogCom = false">Cancelar</v-btn>
                             <v-btn color="primary" text @click="comentar()">Comentar</v-btn>
                           </v-card-actions>
                          <p class="text-center">Comentarios</p>
@@ -255,19 +257,7 @@
                           </v-list>
                         </v-card>
                        </v-dialog>
-                    </div>
-                    </v-container>
-                         </v-col>
-                      </v-list-item-content>
-                  </v-list-item>
-                  </v-form>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <!-- .....................Comentar........................ -->
-                 <!--  .................fin comentar................. -->
-                          </v-card>
-            </v-dialog>
+            <!-- ....................................fin comentario............... -->
              <!-- View show -->
             <v-dialog v-model="dialogC" max-width="500px">
               <v-card>
@@ -335,11 +325,12 @@ export default {
     dialogC: false,
     fav: true,
     menu: false,
-    menu2: false,
+    dialogCom: false,
     dialogEdit: false,
     dialogShow: false,
     ruta: server + ':' + port,
     publicaciones: [],
+    search: '',
     comentarios: [],
     compartidas: [],
     img: '',
@@ -430,6 +421,9 @@ export default {
         val || this.close()
       },
       dialogC (val) {
+        val || this.close()
+      },
+      dialogCom (val) {
         val || this.close()
       }
     },
@@ -524,6 +518,7 @@ export default {
     },
     /* muestra en la tabla los proveedores */
     listarPublicaciones () {
+      this.listarComentarios()
       Api.get('publicaciones')
         .then(response => {
           this.publicaciones = response.data
@@ -534,6 +529,19 @@ export default {
           console.log('error' + e)
         })
     },
+    /*   buscarCategoria (idCategoria) {
+      Api.get('publicaciones')
+        .then(response => {
+          if(response.data){
+          this.publicaciones = response.data
+          console.log(this.publicaciones)
+          }
+        })
+        .catch(e => {
+          console.log('se ejecuta error')
+          console.log('error' + e)
+        })
+    }, */
     listarCompartidas () {
       Api.get('compartir')
         .then(response => {
@@ -572,6 +580,13 @@ export default {
       this.editedIndex = this.publicaciones.indexOf(publicacion)
       this.editedItem = Object.assign({}, publicacion)
       this.dialogC = true
+    },
+    dialogComentar (publicacion) {
+      this.editedIndex = this.publicaciones.indexOf(publicacion)
+      this.editedItem = Object.assign({}, publicacion)
+      this.listarComentarios()
+      this.dialogCom = true
+      this.listarComentarios()
     },
     deleteItem (publicacion) {
       const index = this.publicaciones.indexOf(publicacion)

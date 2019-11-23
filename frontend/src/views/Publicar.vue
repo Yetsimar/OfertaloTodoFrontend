@@ -9,7 +9,7 @@
      </v-toolbar>
      <v-card-text>
   <!-- .......................Formulario Registrar............................. -->
-  <v-form  ref="form" v-model="valid" lazy-validation>
+  <v-form  enctype="multipart/form-data" ref="form" v-model="valid" lazy-validation>
         <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
         <img :src='editedItem.imagen.imageUrl'  style='width:310px;height:auto' />
         <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
@@ -33,11 +33,21 @@
     <v-spacer></v-spacer>
      </v-toolbar>
      <v-card-text>
+        <v-spacer></v-spacer>
+            <v-text-field
+              class="text-xs-center"
+              v-model="search"
+              :search ="search"
+              label="Búsqueda"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
   <v-row align="center" justify="center">
     <!-- publicacion 1 -->
-    <v-col cols="12" sm="8" md="6"  v-for="publicacion in publicaciones" :key="publicacion._id">
+    <v-col cols="12" sm="8" md="6"  v-for="publicacion in filtrarPublicacion" :key="publicacion._id">
       <v-card>
-      <v-form enctype="">
+      <v-form enctype="multipart/form-data">
     <v-list-item  :items="publicaciones">
       <v-list-item-avatar color="grey">
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
@@ -78,7 +88,7 @@
     </v-card>
   </v-col>
     <!-- publicacion compartida -->
-    <v-col cols="12" sm="8" md="6"  v-for="compartir in compartidas" :key="compartir._id">
+    <v-col cols="12" sm="8" md="6"  v-for="compartir in filtrarCompartidas" :key="compartir._id">
       <v-card>
       <v-form enctype="">
     <v-list-item  :items="compartidas">
@@ -138,15 +148,15 @@
                         <v-text-field v-model="editedItem.precio"  label="Precio"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                          <v-select  v-model="editedItem.categoria" :items="idCategoriasArray" label="categoria"></v-select>
+                          <v-select  v-model="editedItem.categoria._id" :items="idCategoriasArray" label="categoria"></v-select>
                       </v-col>
                        <v-col cols="12" sm="12" md="12">
-                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
-                      <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto' />
-                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName' prepend-inner-icon='attach_file' ></v-text-field>
+                      <img :src='ruta + editedItem.imagen' v-if='editedItem.imagen && !editedItem.imagen.imageUrl' style='width:80%;height:80%'/>
+                       <img :src='editedItem.imagen.imageUrl'  , v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto'/>
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imagenName' prepend-inner-icon='attach_file' ></v-text-field>
                       <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
                        </v-col>
-                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
+                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Actualizar</v-btn>
                         <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
                     </v-row>
                   </v-container>
@@ -165,6 +175,7 @@ export default {
     publicaciones: [],
     compartidas: [],
     img: '',
+    search: '',
     editedIndex: -1,
     categorias: [],
     idCategoriasArray: [],
@@ -192,16 +203,6 @@ export default {
         imageFile: ''
       }
     },
-    computed: {
-    },
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogEdit (val) {
-        val || this.close()
-      }
-    },
     valid: true,
     name: '',
     nameRules: [
@@ -220,6 +221,34 @@ export default {
     select: null,
     checkbox: false
   }),
+  computed: {
+    filtrarPublicacion: function () {
+      return this.publicaciones.filter((publicacion) => {
+        return publicacion.titulo.match(this.search) ||
+         publicacion.descripcion.match(this.search) ||
+         publicacion.categoria.nombre.match(this.search) ||
+         publicacion.user.nombre.match(this.search) ||
+         publicacion.user.apellido.match(this.search)
+      })
+    },
+    filtrarCompartidas: function () {
+      return this.compartidas.filter((compartir) => {
+        return compartir.titulo.match(this.search) ||
+         compartir.descripcion.match(this.search) ||
+         compartir.categoria.nombre.match(this.search) ||
+         compartir.user.nombre.match(this.search) ||
+         compartir.user.apellido.match(this.search)
+      })
+    }
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
+    },
+    dialogEdit (val) {
+      val || this.close()
+    }
+  },
   created () {
     this.initialize()
   },

@@ -125,7 +125,7 @@ export default {
         : 'Modificar Categoria'
     },
     formTitleShow () {
-      return 'Información de al Categoria'
+      return 'Información de la Categoria'
     }
   },
 
@@ -179,8 +179,8 @@ export default {
       const index = this.categorias.indexOf(item)
       this.$swal({
         type: 'warning',
-        title: '¿Seguro que quiere borrar?',
-        text: 'No podrá revertir',
+        title: '¿Está seguro que desea borrar?',
+        text: 'No podrá revertir la operación',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -188,7 +188,7 @@ export default {
         cancelButtonText: 'cancelar'
       }).then(result => {
         if (result.value) {
-          this.$swal('Borrado!', 'Su registro fue borrado.', 'success')
+          this.$swal('Borrado!', 'Su registro ha sido borrado.', 'success')
           this.categorias.splice(index, 1)
           Api.delete('categoria/' + item._id)
             .then(response => {
@@ -222,8 +222,8 @@ export default {
               console.log(response)
               this.$swal({
                 type: 'success',
-                title: 'Actualizacion exitosa',
-                text: 'Todos los cambios han guardados'
+                title: 'Modificación exitosa',
+                text: 'sus cambios han sido guardados'
               })
             })
 
@@ -236,8 +236,8 @@ export default {
               console.log(response)
               this.$swal({
                 type: 'success',
-                title: 'Registro exitoso',
-                text: 'Todos los cambios han guardados'
+                title: 'Su registro ha sido realizado con exito',
+                text: 'datos guardados'
               })
             })
             .catch(e => {

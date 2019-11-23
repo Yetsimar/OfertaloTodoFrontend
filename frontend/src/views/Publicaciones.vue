@@ -672,6 +672,7 @@ export default {
       Api.post('publicaciones/' + publicacion._id + '/like', {
       })
         .then((response) => {
+          this.listarPublicaciones()
           console.log('likes: ' + response.data)
           const Toast = this.$swal.mixin({
             type: 'success',
@@ -692,7 +693,6 @@ export default {
         .catch(e => {
           console.log('error' + e)
         })
-      this.listarPublicaciones()
     },
     contadorLikes (publicacion) {
       console.log('id publi dd: ' + publicacion._id)

@@ -14,10 +14,13 @@
       >
          <img src="../assets/logo.png" width="200" height="80"/>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-list>
-        <v-list-tile-title> {{ nombre }} </v-list-tile-title>
-      </v-list>
+      <v-row >
+        <v-spacer></v-spacer>
+     <span class="headline"> {{ nombre }}</span>
+      <v-avatar size="50">
+      <img :src='ruta + `${imagen}`' style='width: 100%; height: 100%;'>
+    </v-avatar>
+    </v-row>
     </v-app-bar>
     <v-navigation-drawer app absolute v-model="drawer" temporary color="#111b1d" dark>
       <v-list dense>
@@ -84,17 +87,20 @@
 </v-layout>
 </template>
 <script>
+import { server, port } from '@/services/environment'
 export default {
   props: {
     source: String
   },
   data: () => ({
     search: '',
+    ruta: server + ':' + port,
     cuenta: null,
     drawer: null,
     mini: null,
     nombre: '',
     apellido: '',
+    imagen: '',
     menu1: '',
     sesion: []
   }),
@@ -104,6 +110,7 @@ export default {
       this.nombre = this.$store.state.usuario.nombre
       this.apellido = this.$store.state.usuario.apellido
       this.sesion = this.$store.state.usuario.rol
+      this.imagen = this.$store.state.usuario.imagen
       if (this.sesion === 'Administrador') {
         this.menu1 = true
       } else if (this.sesion === 'regular') {

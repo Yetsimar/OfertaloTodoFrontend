@@ -9,10 +9,10 @@
      </v-toolbar>
      <v-card-text>
   <!-- .......................Formulario Registrar............................. -->
-  <v-form  ref="form" v-model="valid" lazy-validation>
+  <v-form  enctype="multipart/form-data" ref="form" v-model="valid" lazy-validation>
         <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
         <img :src='editedItem.imagen.imageUrl'  style='width:310px;height:auto' />
-        <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
+        <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile'  prepend-inner-icon='attach_file'></v-text-field>
         <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
         <v-textarea  solo  v-model="editedItem.descripcion" name="input-7-4"   label="Descripcion" ></v-textarea>
         <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="[v => !!v || 'Seleccione una categoria']"  label="Categoria"  required ></v-select>
@@ -33,11 +33,21 @@
     <v-spacer></v-spacer>
      </v-toolbar>
      <v-card-text>
+        <v-spacer></v-spacer>
+            <v-text-field
+              class="text-xs-center"
+              v-model="search"
+              :search ="search"
+              label="Búsqueda"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
   <v-row align="center" justify="center">
     <!-- publicacion 1 -->
-    <v-col cols="12" sm="8" md="6"  v-for="publicacion in publicaciones" :key="publicacion._id">
+    <v-col cols="12" sm="8" md="6"  v-for="publicacion in filtrarPublicacion" :key="publicacion._id">
       <v-card>
-      <v-form enctype="">
+      <v-form enctype="multipart/form-data">
     <v-list-item  :items="publicaciones">
       <v-list-item-avatar color="grey">
         <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
@@ -78,7 +88,7 @@
     </v-card>
   </v-col>
     <!-- publicacion compartida -->
-    <v-col cols="12" sm="8" md="6"  v-for="compartir in compartidas" :key="compartir._id">
+    <v-col cols="12" sm="8" md="6"  v-for="compartir in filtrarCompartidas" :key="compartir._id">
       <v-card>
       <v-form enctype="">
     <v-list-item  :items="compartidas">
@@ -120,34 +130,34 @@
    </v-col>
   </v-row>
   <v-dialog v-model="dialogEdit" max-width="500px">
-              <v-card>
+             <v-card>
                 <v-card-title>
                   <span class="headline">Actualizacion de la Publicacion</span>
                 </v-card-title>
-
                 <v-card-text>
                   <v-container>
                     <v-row>
+                      <v-form  enctype="multipart/form-data">
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.titulo"  label="Titulo"></v-text-field>
+                        <v-text-field v-model="updatedItem.titulo"  label="Titulo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-textarea v-model="editedItem.descripcion"  label="Descripcion"></v-textarea>
+                        <v-textarea v-model="updatedItem.descripcion"  label="Descripcion"></v-textarea>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.precio"  label="Precio"></v-text-field>
+                        <v-text-field v-model="updatedItem.precio"  label="Precio"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                          <v-select  v-model="editedItem.categoria" :items="idCategoriasArray" label="categoria"></v-select>
+                          <v-select  v-model="updatedItem.categoria._id" :items="idCategoriasArray" label="categoria"></v-select>
                       </v-col>
                        <v-col cols="12" sm="12" md="12">
-                      <img :src='ruta + editedItem.imagen'  style='width:80%;height:80%'/>
-                      <img :src='editedItem.imagen.imageUrl' v-if='editedItem.imagen.imageUrl' style='width:310px;height:auto' />
-                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile' v-model='editedItem.imagen.imageName' prepend-inner-icon='attach_file' ></v-text-field>
-                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
+                         <img :src='ruta + updatedItem.imagen'  style='width:310px;height:auto' />
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile2'  prepend-inner-icon='attach_file'></v-text-field>
+                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked2">
                        </v-col>
-                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
+                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Actualizar</v-btn>
                         <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
+                         </v-form>
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -165,10 +175,24 @@ export default {
     publicaciones: [],
     compartidas: [],
     img: '',
+    search: '',
     editedIndex: -1,
     categorias: [],
     idCategoriasArray: [],
+    imagenMiniatura: '',
     editedItem: {
+      _id: '',
+      titulo: '',
+      descripcion: '',
+      categoria: '',
+      precio: '',
+      imagen: {
+        imageName: '',
+        imageUrl: '',
+        imageFile: ''
+      }
+    },
+    updatedItem: {
       _id: '',
       titulo: '',
       descripcion: '',
@@ -192,16 +216,6 @@ export default {
         imageFile: ''
       }
     },
-    computed: {
-    },
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogEdit (val) {
-        val || this.close()
-      }
-    },
     valid: true,
     name: '',
     nameRules: [
@@ -220,6 +234,37 @@ export default {
     select: null,
     checkbox: false
   }),
+  computed: {
+    imagenMini () {
+      return this.imagenMiniatura
+    },
+    filtrarPublicacion: function () {
+      return this.publicaciones.filter((publicacion) => {
+        return publicacion.titulo.match(this.search) ||
+         publicacion.descripcion.match(this.search) ||
+         publicacion.categoria.nombre.match(this.search) ||
+         publicacion.user.nombre.match(this.search) ||
+         publicacion.user.apellido.match(this.search)
+      })
+    },
+    filtrarCompartidas: function () {
+      return this.compartidas.filter((compartir) => {
+        return compartir.titulo.match(this.search) ||
+         compartir.descripcion.match(this.search) ||
+         compartir.categoria.nombre.match(this.search) ||
+         compartir.user.nombre.match(this.search) ||
+         compartir.user.apellido.match(this.search)
+      })
+    }
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
+    },
+    dialogEdit (val) {
+      val || this.close()
+    }
+  },
   created () {
     this.initialize()
   },
@@ -257,6 +302,23 @@ export default {
     pickFile () {
       this.$refs.image.click()
     },
+    pickFile2 () {
+      this.$refs.image.click()
+    },
+    onFilePicked2 (e) {
+      let files = e.target.files[0].name
+      console.log('imagennn: ' + files)
+      this.updatedItem.imagen = '/upload/' + files
+      let filess = e.target.files[0]
+      this.CargarImagen(filess)
+    },
+    CargarImagen (filess) {
+      const fr = new FileReader()
+      fr.addEventListener('load', (e) => {
+        this.imagenMiniatura = e.target.result
+      })
+      fr.readAsDataURL(filess)
+    },
     onFilePicked (e) {
       const files = e.target.files
       if (files[0] !== undefined) {
@@ -276,7 +338,7 @@ export default {
           fr.addEventListener('load', () => {
             this.editedItem.imagen.imageUrl = fr.result
             this.editedItem.imagen.imageFile = files[0] // this is an image file that can be sent to server...
-            console.log('url' + this.editedItem.imagen.imageUrl)
+            console.log('url:  ' + this.editedItem.imagen.imageUrl)
           })
         } else {
           this.$swal.fire(
@@ -316,7 +378,7 @@ export default {
     },
     editItem (publicacion) {
       this.editedIndex = this.publicaciones.indexOf(publicacion)
-      this.editedItem = Object.assign({}, publicacion)
+      this.updatedItem = Object.assign({}, publicacion)
       this.dialogEdit = true
     },
     deleteItem (publicacion) {
@@ -396,15 +458,17 @@ export default {
         data.append('imagen', this.editedItem.imagen.imageFile)
       }
       if (this.editedIndex > -1) {
-        console.log('id public. ' + this.editedItem._id)
-        Api.put('publicaciones/' + this.editedItem._id, {
-          titulo: this.editedItem.titulo,
-          descripcion: this.editedItem.descripcion,
-          categoria: this.editedItem.categoria,
-          precio: this.editedItem.precio,
-          imagen: this.editedItem.imagen })
+        console.log('id public. ' + this.updatedItem._id)
+        console.log('la imagen: ' + this.updatedItem.imageUrl)
+        Api.put('publicaciones/' + this.updatedItem._id, {
+          titulo: this.updatedItem.titulo,
+          descripcion: this.updatedItem.descripcion,
+          categoria: this.updatedItem.categoria,
+          precio: this.updatedItem.precio,
+          imagen: this.updatedItem.imagen
+        })
           .then(response => {
-            this.editedItem = Object.assign({}, this.defaultItem)
+            this.updatedItem = Object.assign({}, this.defaultItem)
             console.log(response)
             this.$swal({
               type: 'success',
@@ -420,8 +484,9 @@ export default {
             })
             console.log('error guardar....' + e)
           })
-        Object.assign(this.publicaciones[this.editedIndex], this.editedItem)
+        Object.assign(this.publicaciones[this.editedIndex], this.updatedItem)
       } else {
+        console.log('la imagenUrl en post: ' + this.editedItem.imageUrl)
         Api.post('publicaciones', data)
           .then(response => {
             console.log(response.data)
@@ -435,6 +500,7 @@ export default {
       }
       console.log('Datos guardados')
       this.reset()
+      this.listarPublicaciones()
       this.close()
     }
   }

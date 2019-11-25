@@ -2,9 +2,11 @@
   v-container(grid-list-xl, text-xs-center)
     v-layout(row, wrap)
       v-flex(xs6, offset-xs3)
-        img( src="../assets/logo3.png" height="120" )
+        v-row(align="center" justify="center")
+          img( src="../assets/logo3.png" height="120" )
       v-flex(xs6, offset-xs3)
-        h1 Inicio de Sesión
+        v-row(align="center" justify="center")
+          h1 Inicio de Sesión
         v-form(enctype="multipart/form-data", @submit.prevent="login")
           v-text-field(id="email"
             v-model="form.email"

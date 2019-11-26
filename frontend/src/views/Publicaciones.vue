@@ -127,7 +127,6 @@
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon>
-        {{publicacion.vistas}}
         <v-icon color="blue darken-2" title="Comentar" @click="dialogComentar(publicacion)">mdi-message-text</v-icon>
       </v-btn>
       <v-btn icon>

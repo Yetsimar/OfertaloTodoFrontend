@@ -99,7 +99,7 @@
       <v-form enctype="" >
     <v-list-item :search="search"  >
       <v-list-item-avatar color="grey">
-        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+        <img :src='ruta + `${publicacion.user.imagen}`' style='width: 100%; height: 100%;'>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title value="titulo"  class="headline">{{publicacion.titulo }}</v-list-item-title>
@@ -143,7 +143,7 @@
       <v-form enctype="">
     <v-list-item  :items="compartidas">
       <v-list-item-avatar color="grey">
-        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+    <img :src='ruta + `${compartir.user.imagen}`' style='width: 100%; height: 100%;'>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="headline">{{compartir.titulo}}</v-list-item-title>
@@ -187,7 +187,7 @@
                       <div> Datos del Vendedor</div>
                       <v-col cols="12" sm="12" md="6">
                          <v-list-item-avatar color="grey">
-                      <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+                      <img :src='ruta + editedItem.user.imagen'  style='width:100%;height:100%'/>
                     </v-list-item-avatar>
                      <v-text-field v-model="editedItem.user.nombre" readonly  label="Nombre" ></v-text-field>
                      </v-col>
@@ -352,7 +352,7 @@ export default {
     idCategoriasArray: [],
     items: [
       {
-        action: 'restaurant',
+        action: 'mdi-format-list-checkbox',
         title: 'Categorias',
         active: true,
         items: [

@@ -9,7 +9,7 @@
         class="elevation-1"
       >
         <template v-slot:top>
-          <v-toolbar flat color="indigo" dark>
+          <v-toolbar flat color="indigo" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
             <v-toolbar-title>Categorias</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
@@ -225,6 +225,7 @@ export default {
                 title: 'Modificación exitosa',
                 text: 'sus cambios han sido guardados'
               })
+              this.initialize()
             })
 
           Object.assign(this.categorias[this.editedIndex], this.editedItem)
@@ -236,9 +237,11 @@ export default {
               console.log(response)
               this.$swal({
                 type: 'success',
-                title: 'Su registro ha sido realizado con exito',
+                title: 'Registro con exitoso',
                 text: 'datos guardados'
               })
+              this.categorias.push(this.editedItem)
+              this.initialize()
             })
             .catch(e => {
               this.$swal({
@@ -248,7 +251,6 @@ export default {
               })
               console.log('error guardar....' + e)
             })
-          this.categorias.push(this.editedItem)
         }
         this.close()
       }

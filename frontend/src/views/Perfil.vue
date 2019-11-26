@@ -72,14 +72,15 @@
                   <v-container>
                     <v-row align="center" justify="center">
                       <v-avatar size = " 62 " >
-            <img :src='editForm.imagen.imageUrl'  style='width:100%;height:100%' />
+                     <img :src='ruta + editForm.imagen'  style='width:310px;height:auto' />
                       </v-avatar>
                     </v-row>
                     <v-spacer></v-spacer>
                     <v-row>
-                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto de perfil' @click='pickFile' v-model='editForm.imagen.imageName'  prepend-inner-icon='attach_file'></v-text-field>
-                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
-                    </v-row>
+                     <img :src='ruta + editForm.imagen'  style='width:310px;height:auto' />
+                      <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile2'  prepend-inner-icon='attach_file'></v-text-field>
+                      <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked2">
+                     </v-row>
                     <v-row align="center" justify="center">
                        <v-text-field
                         v-model="editForm.nombre"

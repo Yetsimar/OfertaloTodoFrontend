@@ -1,6 +1,6 @@
 <template>
 <v-layout align-start>
-  <v-flex xs6 sm3>
+  <v-flex  xs12 sm6>
 <v-app-bar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
@@ -11,18 +11,45 @@
       <v-toolbar-title
         style="width: 300px"
         class="ml-0 pl-4 "
-      >
-         <img src="../assets/logo.png" width="200" height="80"/>
+      ><v-row>
+         <v-col>
+         <img src="../assets/logo.png" width="150" height="80"/>
+         </v-col>
+         </v-row>
       </v-toolbar-title>
-      <v-row >
-        <v-spacer></v-spacer>
-     <span class="headline"> {{ nombre }}</span>
-      <v-avatar size="50">
+      <v-spacer></v-spacer>
+    <v-menu offset-y>
+      <template v-slot:activator="{ on }">
+        <v-avatar size="36">
       <img :src='ruta + `${imagen}`' style='width: 100%; height: 100%;'>
     </v-avatar>
-    </v-row>
+        <v-btn small rounded
+          color="#111b1d" dark
+          v-on="on"
+        v-text="nombre + ' '+  apellido">
+        </v-btn>
+      </template>
+      <v-card absolute color="#C4C4C5" black>
+     <v-list-item :to="{name: 'Perfil'}">
+          <v-list-item-action>
+            <v-icon color="#11879a">mdi-account</v-icon>
+          </v-list-item-action>
+        <v-list-item-title>Perfil</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click='logout'>
+          <v-list-item-action>
+            <v-icon color="#11879a">lock_open</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Cerrar sesión</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+      </v-card>
+    </v-menu>
     </v-app-bar>
-    <v-navigation-drawer app absolute v-model="drawer" temporary color="#111b1d" dark>
+    <v-navigation-drawer app absolute v-model="drawer" temporary color="#C4C4C5" black>
       <v-list dense>
       <v-list-item :to="{name: 'home'}">
           <v-list-item-action>
@@ -32,6 +59,7 @@
             <v-list-item-title>Inicio</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
         <v-list-item v-if='menu1 === true' :to="{name: 'Categoria'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-format-list-bulleted</v-icon>
@@ -40,6 +68,7 @@
             <v-list-item-title>Categorias</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
         <v-list-item :to="{name: 'Publicaciones'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-newspaper-variant-multiple</v-icon>
@@ -48,6 +77,7 @@
             <v-list-item-title>Publicaciones</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
         <v-list-item v-if='menu1 === false' :to="{name: 'Publicar'}">
           <v-list-item-action>
             <v-icon color="#11879a">mdi-newspaper</v-icon>
@@ -56,31 +86,7 @@
             <v-list-item-title>Publicar</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{name: 'Perfil'}">
-          <v-list-item-action>
-            <v-icon color="#11879a">mdi-account</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Perfil</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
         <v-divider></v-divider>
-        <v-list-item :to="{name: ''}">
-          <v-list-item-action>
-            <v-icon color="#11879a">mdi-help-circle</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Ayuda</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click='logout'>
-          <v-list-item-action>
-            <v-icon color="#11879a">lock_open</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Cerrar sesión</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
       </v-list>
   </v-navigation-drawer>
   </v-flex>

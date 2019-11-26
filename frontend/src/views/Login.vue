@@ -22,6 +22,9 @@
             outline=''
             @click:append='show3 = !show3')
               v-spacer
+          div
+            //- v-btn(color="#11879a", dark, @click="executeRecaptcha") execute recaptcha
+            Recaptcha(ref="recaptcha" @verify="submit")
           v-btn(color="#11879a", dark, @click.native='login') Entrar
           v-row(align="center", justify="center")
             h3
@@ -30,9 +33,13 @@
 </template>
 
 <script>
+import Recaptcha from '@/components/recaptcha.vue'
 import Api from '@/services/methods'
 export default {
   name: 'login',
+  components: {
+    Recaptcha
+  },
   props: {
     source: String
   },
@@ -48,6 +55,13 @@ export default {
     this.initialize()
   },
   methods: {
+    submit (response) {
+      console.log(response)
+    },
+    // execute the recaptcha widget
+    executeRecaptcha () {
+      this.$refs.recaptcha.execute()
+    },
     initialize () {},
     login () {
       Api.post('/login', this.form)

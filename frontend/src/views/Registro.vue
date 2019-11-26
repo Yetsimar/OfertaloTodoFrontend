@@ -89,10 +89,6 @@
             <v-col cols="6">
                 <v-btn color= "#11879a" @click='save()' dark><v-icon>save</v-icon>Registrar</v-btn>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col cols="6">
-           <v-btn color="#11879a" @click='save()' dark><v-icon>close</v-icon>Cancelar</v-btn>
-            </v-col>
              </v-row>
            <v-row align="center" justify="center">
             <h3>¿Ya tienes cuenta? <a href="./" style="color:#12ceeb;">has click aquí</a></h3>

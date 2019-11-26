@@ -3,9 +3,8 @@
 <v-row  justify="center"  :items="publicaciones">
 <v-col cols="12" sm="8" md="4">
    <v-card >
-     <v-toolbar flat color="indigo" dark>
-    <v-toolbar-title >Publica un articulo</v-toolbar-title>
-    <v-spacer></v-spacer>
+     <v-toolbar flat color="#11879a" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    <v-toolbar-title class="white--text">Publica un artículo</v-toolbar-title>
      </v-toolbar>
      <v-card-text>
   <!-- .......................Formulario Registrar............................. -->
@@ -28,9 +27,10 @@
    </v-col>
    <v-col cols="12" sm="8" md="8">
    <v-card >
-   <v-toolbar flat color="indigo" dark>
-    <v-toolbar-title >Mis ultimas publicaciones</v-toolbar-title>
-    <v-spacer></v-spacer>
+   <v-toolbar flat color="#11879a" dark prominent src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    <v-toolbar-title class="white--text">Mis ultimas Publicaciones</v-toolbar-title>
+       <v-card-title>
+       </v-card-title>
      </v-toolbar>
      <v-card-text>
         <v-spacer></v-spacer>
@@ -50,7 +50,7 @@
       <v-form enctype="multipart/form-data">
     <v-list-item  :items="publicaciones">
       <v-list-item-avatar color="grey">
-        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+    <img :src='ruta + `${publicacion.user.imagen}`' style='width: 100%; height: 100%;'>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title value="titulo" class="headline">{{publicacion.titulo}}</v-list-item-title>
@@ -93,7 +93,7 @@
       <v-form enctype="">
     <v-list-item  :items="compartidas">
       <v-list-item-avatar color="grey">
-        <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+        <img :src='ruta + `${compartir.user.imagen}`' style='width: 100%; height: 100%;'>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="headline">{{compartir.titulo}}</v-list-item-title>
@@ -156,7 +156,7 @@
                       <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked2">
                        </v-col>
                         <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Actualizar</v-btn>
-                        <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
+                        <v-btn  color="error" class="mr-4"  @click="close">Cancelar</v-btn>
                          </v-form>
                     </v-row>
                   </v-container>

@@ -8,17 +8,16 @@
      </v-toolbar>
      <v-card-text>
   <!-- .......................Formulario Registrar............................. -->
-  <v-form  enctype="multipart/form-data" ref="form" v-model="valid" lazy-validation>
-        <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="nameRules" label="Titulo de la publicacion"  required></v-text-field>
-        <img :src='editedItem.imagen.imageUrl'  style='width:310px;height:auto' />
+  <v-form   ref="form" v-model="valid" lazy-validation>
+        <v-text-field  v-model="editedItem.titulo" :counter="20"  :rules="tituloRules" label="Titulo de la publicacion"  ></v-text-field>
+        <img :src='editedItem.imagen.imageUrl'  style='width:100%;height:auto' />
         <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile'  prepend-inner-icon='attach_file'></v-text-field>
         <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked">
-        <v-textarea  solo  v-model="editedItem.descripcion" name="input-7-4"   label="Descripcion" ></v-textarea>
-        <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="[v => !!v || 'Seleccione una categoria']"  label="Categoria"  required ></v-select>
-        <v-text-field   v-model="editedItem.precio"   label="Pon un precio"  required></v-text-field>
-        <v-checkbox  v-model="checkbox" :rules="[v => !!v || 'selecciona la casilla para  continuar!']" label="seguro desea publicar?"  required ></v-checkbox>
+        <v-textarea  solo :counter="40"  v-model="editedItem.descripcion" name="input-7-4" :rules ="descripcionRules"  label="Descripcion" ></v-textarea>
+        <v-select   v-model="editedItem.categoria" :items="idCategoriasArray" :rules="categoriaRules"  label="Categoria"></v-select>
+        <v-text-field   v-model="editedItem.precio"   label="Pon un precio" type="Number" :rules="precioRules" ></v-text-field>
 
-        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Publicar</v-btn>
+        <v-btn     color="success"  class="mr-4" @click="save" >Publicar</v-btn>
         <v-btn  color="error" class="mr-4"  @click="reset">Cancelar</v-btn>
   </v-form>
  <!--  ....................mis publicaciones .......................... -->
@@ -80,7 +79,6 @@
         <v-icon>mdi-heart</v-icon>
       </v-btn>
       <v-btn icon>
-        {{publicacion.vistas}}
         <v-icon>mdi-share-variant</v-icon>
       </v-btn>
     </v-card-actions>
@@ -137,25 +135,25 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-form  enctype="multipart/form-data">
+                      <v-form ref="form"  enctype="multipart/form-data" v-model="valid" lazy-validation>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="updatedItem.titulo"  label="Titulo"></v-text-field>
+                        <v-text-field v-model="updatedItem.titulo" :rules="tituloRules" label="Titulo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-textarea v-model="updatedItem.descripcion"  label="Descripcion"></v-textarea>
+                        <v-textarea v-model="updatedItem.descripcion" :rules ="descripcionRules" label="Descripcion"></v-textarea>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="updatedItem.precio"  label="Precio"></v-text-field>
+                        <v-text-field v-model="updatedItem.precio" type="Number" :rules="precioRules2"  label="Precio"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                          <v-select  v-model="updatedItem.categoria._id" :items="idCategoriasArray" label="categoria"></v-select>
+                          <v-select  v-model="updatedItem.categoria._id" :rules="categoriaRules" :items="idCategoriasArray" label="categoria"></v-select>
                       </v-col>
                        <v-col cols="12" sm="12" md="12">
                          <img :src='ruta + updatedItem.imagen'  style='width:310px;height:auto' />
                       <v-text-field style='height: 56px;margin: 0px 0px 10px;' outline label='Seleccione la Foto' @click='pickFile2'  prepend-inner-icon='attach_file'></v-text-field>
                       <input type="file"  style="display: none;"  ref="image"   accept="image/*" @change="onFilePicked2">
                        </v-col>
-                        <v-btn   :disabled="!valid"  color="success"  class="mr-4" @click="save" >Actualizar</v-btn>
+                        <v-btn   color="success"  class="mr-4" @click="save" >Actualizar</v-btn>
                         <v-btn  color="error" class="mr-4"  @click="close">Cancelar</v-btn>
                          </v-form>
                     </v-row>
@@ -171,6 +169,28 @@ import { server, port } from '@/services/environment'
 export default {
   data: () => ({
     dialogEdit: false,
+    valid: true,
+    tituloRules: [
+      v => !!v || 'El titulo es requerido',
+      v => (v && v.length <= 20) || 'limite maximo de 20 caracteres'
+    ],
+    descripcionRules: [
+      v => !!v || 'La descripcion es requerida',
+      v => (v && v.length <= 40) || 'limite maximo de 40 caracteres'
+    ],
+    fotoRules: [
+      v => !!v || 'Se necesita una foto'
+    ],
+    precioRules: [
+      v => !!v || 'El precio es requerido',
+      v => (v && v.length <= 6) || 'limite maximo de 6 digito'
+    ],
+    precioRules2: [
+      v => !!v || 'El precio es requerido'
+    ],
+    categoriaRules: [
+      v => !!v || 'Seleccione una categoria'
+    ],
     ruta: server + ':' + port,
     publicaciones: [],
     compartidas: [],
@@ -215,24 +235,7 @@ export default {
         imageUrl: '',
         imageFile: ''
       }
-    },
-    valid: true,
-    name: '',
-    nameRules: [
-      v => !!v || 'El nombre es requerido',
-      v => (v && v.length <= 20) || 'limite maximo de 20 caracteres'
-    ],
-    foto: '',
-    fotoRules: [
-      v => !!v || 'Se necesita una foto'
-    ],
-    email: '',
-    emailRules: [
-      v => !!v || 'El correo es requerido',
-      v => /.+@.+\..+/.test(v) || 'El correo no es valido'
-    ],
-    select: null,
-    checkbox: false
+    }
   }),
   computed: {
     imagenMini () {
@@ -357,7 +360,9 @@ export default {
     },
     validate () {
       if (this.$refs.form.validate()) {
-        this.snackbar = true
+        return true
+      } else {
+        return false
       }
     },
     reset () {
@@ -435,73 +440,75 @@ export default {
       }, 300)
     },
     save () {
-      this.loading = true
-      const data = new FormData()
-      Object.keys(this.editedItem).map(key => {
-        if (Array.isArray(this.editedItem[key])) {
-          this.editedItem[key].forEach(val => {
-            if (typeof val === 'object' && val !== null) {
-              return data.append(`${key}[]`, JSON.stringify(val))
-            }
-            return data.append(`${key}[]`, val)
-          })
-        } else if (
-          typeof this.editedItem[key] === 'object' &&
-          this.editedItem[key] !== null
-        ) {
-          return data.append(key, JSON.stringify(this.editedItem[key]))
-        } else {
-          return data.append(key, this.editedItem[key])
-        }
-      })
-      if (this.editedItem.imagen.imageFile) {
-        data.append('imagen', this.editedItem.imagen.imageFile)
-      }
-      if (this.editedIndex > -1) {
-        console.log('id public. ' + this.updatedItem._id)
-        console.log('la imagen: ' + this.updatedItem.imageUrl)
-        Api.put('publicaciones/' + this.updatedItem._id, {
-          titulo: this.updatedItem.titulo,
-          descripcion: this.updatedItem.descripcion,
-          categoria: this.updatedItem.categoria,
-          precio: this.updatedItem.precio,
-          imagen: this.updatedItem.imagen
+      if (this.validate()) {
+        this.loading = true
+        const data = new FormData()
+        Object.keys(this.editedItem).map(key => {
+          if (Array.isArray(this.editedItem[key])) {
+            this.editedItem[key].forEach(val => {
+              if (typeof val === 'object' && val !== null) {
+                return data.append(`${key}[]`, JSON.stringify(val))
+              }
+              return data.append(`${key}[]`, val)
+            })
+          } else if (
+            typeof this.editedItem[key] === 'object' &&
+            this.editedItem[key] !== null
+          ) {
+            return data.append(key, JSON.stringify(this.editedItem[key]))
+          } else {
+            return data.append(key, this.editedItem[key])
+          }
         })
-          .then(response => {
-            this.updatedItem = Object.assign({}, this.defaultItem)
-            console.log(response)
-            this.$swal({
-              type: 'success',
-              title: 'Actualizacion exitosa',
-              text: 'Todos los cambios han guardados'
-            })
+        if (this.editedItem.imagen.imageFile) {
+          data.append('imagen', this.editedItem.imagen.imageFile)
+        }
+        if (this.editedIndex > -1) {
+          console.log('id public. ' + this.updatedItem._id)
+          console.log('la imagen: ' + this.updatedItem.imageUrl)
+          Api.put('publicaciones/' + this.updatedItem._id, {
+            titulo: this.updatedItem.titulo,
+            descripcion: this.updatedItem.descripcion,
+            categoria: this.updatedItem.categoria,
+            precio: this.updatedItem.precio,
+            imagen: this.updatedItem.imagen
           })
-          .catch(e => {
-            this.$swal({
-              type: 'error',
-              title: 'Error al Actualizar',
-              text: 'Por verifique los datos e intente de nuevo'
+            .then(response => {
+              this.updatedItem = Object.assign({}, this.defaultItem)
+              console.log(response)
+              this.$swal({
+                type: 'success',
+                title: 'Actualizacion exitosa',
+                text: 'Todos los cambios han guardados'
+              })
             })
-            console.log('error guardar....' + e)
-          })
-        Object.assign(this.publicaciones[this.editedIndex], this.updatedItem)
-      } else {
-        console.log('la imagenUrl en post: ' + this.editedItem.imageUrl)
-        Api.post('publicaciones', data)
-          .then(response => {
-            console.log(response.data)
-            this.$swal({
-              type: 'success',
-              title: 'Felicidades',
-              text: 'Su publicación se ha realizado con éxito'
+            .catch(e => {
+              this.$swal({
+                type: 'error',
+                title: 'Error al Actualizar',
+                text: 'Por verifique los datos e intente de nuevo'
+              })
+              console.log('error guardar....' + e)
             })
-            this.publicaciones.push(response.data)
-          })
+          Object.assign(this.publicaciones[this.editedIndex], this.updatedItem)
+          this.listarPublicaciones()
+        } else {
+          console.log('la imagenUrl en post: ' + this.editedItem.imageUrl)
+          Api.post('publicaciones', data)
+            .then(response => {
+              console.log(response.data)
+              this.$swal({
+                type: 'success',
+                title: 'Felicidades',
+                text: 'Su publicación se ha realizado con éxito'
+              })
+              this.publicaciones.push(response.data)
+              this.listarPublicaciones()
+            })
+        }
+        console.log('Datos guardados')
+        this.close()
       }
-      console.log('Datos guardados')
-      this.reset()
-      this.listarPublicaciones()
-      this.close()
     }
   }
 }
